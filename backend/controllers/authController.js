@@ -44,11 +44,11 @@ const login = async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    res.cookie("jwt-vid", token, {
+      maxAge: 24 * 60 * 60 * 1000, // 3 hours in milliseconds
+      httpOnly: true, // This pervients the cookie from being accessed by javascript
+      sameSite: "strict", // This pervients CSRF attacks by not allowing the cookie to be sent by a third party
+      secure: ENV_VARS.NODE_ENV !== "devemopment", // This pervients the cookie from being sent over http
     });
 
     res.json({

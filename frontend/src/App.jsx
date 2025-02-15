@@ -1,6 +1,4 @@
 import React from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -15,14 +13,13 @@ import Feedback from "./pages/Feedback";
 import WhatIf from "./pages/WhatIf";
 import RemindMe from "./pages/RemindMe";
 import NotFound from "./pages/NotFound"; // Not Found should be the last route
+import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
@@ -36,6 +33,7 @@ const App = () => (
           <Route path="/RemindMe" element={<RemindMe />} />
           <Route path="*" element={<NotFound />} /> {/* Keep this at the end */}
         </Routes>
+        <Toaster />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

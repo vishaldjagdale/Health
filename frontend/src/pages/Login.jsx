@@ -4,15 +4,25 @@ import { Input } from "@/components/ui/input";
 import { Header } from "@/components/layout/Header";
 import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
+import { useState } from "react";
+import { useAuthStore } from "../store/authUser.js";
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const [email, getEmail] = useState("");
+  const [password, getPassword] = useState("");
+  const { login, isLoggingIn } = useAuthStore();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Login logic will be implemented later
+    const result = await login({ email, password });
+
+    if (result.success) {
+      navigate("/");
+    }
   };
- 
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -22,7 +32,7 @@ const Login = () => {
             <div className="text-center">
               <div className="flex justify-center items-center gap-2 mb-2">
                 <Heart className="w-8 h-8 text-primary" />
-                <h1 className="text-2xl font-bold text-white">Welcome Back {User.name}</h1>
+                <h1 className="text-2xl font-bold text-white">Welcome Back</h1>
               </div>
               <p className="text-white/80">Sign in to your account</p>
             </div>
@@ -30,33 +40,40 @@ const Login = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm text-white/80">
-                 {user.email}
+                  Email
                 </label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
+                  required
+                  value={email}
+                  onChange={(e) => getEmail(e.target.value)}
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="password" className="text-sm text-white/80">
-                  {user.password}
+                  Password
                 </label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder="********"
+                  required
+                  value={password}
+                  onChange={(e) => getPassword(e.target.value)}
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full bg-[#4FD1C5] hover:bg-[#38B2AC] text-white"
+                disabled={isLoggingIn}
               >
-                Sign In
+                {isLoggingIn ? "Signing In..." : "Sign In"}
               </Button>
             </form>
 
