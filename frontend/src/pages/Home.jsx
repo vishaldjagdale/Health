@@ -1,7 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { createRoutesFromChildren, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
-import { Activity, User, MapPin, MessageSquare, ArrowRight, HelpCircle, AlarmClock } from "lucide-react";
+import {
+  Activity,
+  User,
+  MapPin,
+  MessageSquare,
+  ArrowRight,
+  HelpCircle,
+  AlarmClock,
+} from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -11,16 +19,19 @@ const Index = () => {
       icon: Activity,
       title: "Symptom Analysis",
       description: "Advanced symptom tracking and analysis for accurate predictions",
+      link: "/symptoms", // ✅ Clickable
     },
     {
       icon: User,
       title: "Specialist Matching",
       description: "Connect with the right medical specialists for your condition",
+      link: "/specialists", // ✅ Clickable
     },
     {
       icon: MapPin,
       title: "Location-Based",
       description: "Find healthcare providers in your area",
+      link: "/locations", // ✅ Clickable
     },
     {
       icon: MessageSquare,
@@ -28,15 +39,15 @@ const Index = () => {
       description: "Contribute to improving diagnosis accuracy",
     },
     {
-      icon:HelpCircle,
-      title:"WhatIf",
-      description:"Search what will happen if you eat healty or unhealty from today"
+      icon: HelpCircle,
+      title: "WhatIf",
+      description: "Search what will happen if you eat healthy or unhealthy from today",
+      link: "/whatif", // ✅ Clickable
     },
     {
-      icon:AlarmClock,
-      title:"RemindMe",
-      description:"We will remind you to take your medicine"
-
+      icon: AlarmClock,
+      title: "RemindMe",
+      description: "We will remind you to take your medicine",
     },
   ];
 
@@ -78,10 +89,10 @@ const Index = () => {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="p-6 glass-morphism rounded-lg hover:bg-white/10 transition-all duration-300 animate-fadeIn"
-                style={{
-                  animationDelay: `${index * 100}ms`,
-                }}
+                className={`p-6 glass-morphism rounded-lg transition-all duration-300 animate-fadeIn 
+                  ${feature.link ? "cursor-pointer hover:bg-white/10" : ""}`}
+                style={{ animationDelay: `${index * 100}ms` }}
+                onClick={() => feature.link && navigate(feature.link)} // ✅ Makes the div clickable
               >
                 <feature.icon className="w-12 h-12 text-primary mb-4" />
                 <h3 className="text-xl font-semibold text-white mb-2">
