@@ -9,7 +9,6 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Registration logic will be implemented later
   };
 
   return (
@@ -26,7 +25,9 @@ const Register = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="name" className="text-sm text-white/80">{User.name}</label>
+                <label htmlFor="name" className="text-sm text-white/80">
+                  {User.name}
+                </label>
                 <Input
                   id="name"
                   type="text"
@@ -36,7 +37,9 @@ const Register = () => {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm text-white/80">{user.email}</label>
+                <label htmlFor="email" className="text-sm text-white/80">
+                  {user.email}
+                </label>
                 <Input
                   id="email"
                   type="email"
@@ -46,7 +49,9 @@ const Register = () => {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="password" className="text-sm text-white/80">{user.password}</label>
+                <label htmlFor="password" className="text-sm text-white/80">
+                  {user.password}
+                </label>
                 <Input
                   id="password"
                   type="password"
@@ -55,8 +60,8 @@ const Register = () => {
                 />
               </div>
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full bg-primary hover:bg-primary/90 text-white"
               >
                 Create Account
