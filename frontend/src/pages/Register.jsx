@@ -2,13 +2,27 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Header } from "@/components/layout/Header";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { UserPlus } from "lucide-react";
+import { useAuthStore } from "../store/authUser.js";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { signup } = useAuthStore();
 
-  const handleSubmit = (e) => {
+  const { searchParams } = new URL(document.location);
+  const emailParam = searchParams.get("email");
+
+  const [email, setEmail] = useState(emailParam ? emailParam : "");
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log(username, email, password);
+    await signup({ username, email, password });
+    navigate("/");
   };
 
   return (
@@ -26,36 +40,45 @@ const Register = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="name" className="text-sm text-white/80">
-                  {User.name}
+                  Full Name
                 </label>
                 <Input
-                  id="name"
                   type="text"
                   placeholder="Enter your full name"
+                  required
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUserName(e.target.value)}
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm text-white/80">
-                  {user.email}
+                  Email
                 </label>
                 <Input
-                  id="email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={emailParam ? emailParam : "xyz@example.com"}
+                  required
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="password" className="text-sm text-white/80">
-                  {user.password}
+                  Password
                 </label>
                 <Input
-                  id="password"
                   type="password"
-                  placeholder="Create a password"
+                  placeholder="********"
+                  required
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>

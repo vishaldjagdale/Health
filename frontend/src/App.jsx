@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Index from "./pages/Index";
+import Index from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Symptoms from "./pages/Symptoms";
@@ -15,7 +15,6 @@ import Feedback from "./pages/Feedback";
 import WhatIf from "./pages/WhatIf";
 import RemindMe from "./pages/RemindMe";
 import NotFound from "./pages/NotFound"; // Not Found should be the last route
-
 
 const queryClient = new QueryClient();
 
@@ -35,7 +34,6 @@ const App = () => (
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/whatif" element={<WhatIf />} />
           <Route path="/RemindMe" element={<RemindMe />} />
-
           <Route path="*" element={<NotFound />} /> {/* Keep this at the end */}
         </Routes>
       </BrowserRouter>
