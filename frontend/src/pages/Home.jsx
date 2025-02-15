@@ -1,7 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { createRoutesFromChildren, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
-import { Activity, User, MapPin, MessageSquare, ArrowRight, HelpCircle, AlarmClock } from "lucide-react";
+import {
+  Activity,
+  User,
+  MapPin,
+  MessageSquare,
+  ArrowRight,
+  HelpCircle,
+  AlarmClock,
+  MessageCircle,
+} from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -28,15 +37,14 @@ const Index = () => {
       description: "Contribute to improving diagnosis accuracy",
     },
     {
-      icon:HelpCircle,
-      title:"WhatIf",
-      description:"Search what will happen if you eat healty or unhealty from today"
+      icon: HelpCircle,
+      title: "WhatIf",
+      description: "Explore health impacts of your lifestyle choices",
     },
     {
-      icon:AlarmClock,
-      title:"RemindMe",
-      description:"We will remind you to take your medicine"
-
+      icon: AlarmClock,
+      title: "RemindMe",
+      description: "Set reminders for your medications",
     },
   ];
 
@@ -79,9 +87,7 @@ const Index = () => {
               <div
                 key={index}
                 className="p-6 glass-morphism rounded-lg hover:bg-white/10 transition-all duration-300 animate-fadeIn"
-                style={{
-                  animationDelay: `${index * 100}ms`,
-                }}
+                style={{ animationDelay: `${index * 100}ms` }}
               >
                 <feature.icon className="w-12 h-12 text-primary mb-4" />
                 <h3 className="text-xl font-semibold text-white mb-2">
@@ -93,6 +99,18 @@ const Index = () => {
           </div>
         </section>
       </main>
+
+      {/* Chatbot Button */}
+      <div className="fixed bottom-6 right-6">
+        <Button
+          size="lg"
+          className="bg-primary text-white flex items-center gap-2 px-5 py-3 rounded-full shadow-lg hover:bg-primary/90"
+          onClick={() => navigate("/chat")} // ✅ Navigating to Chatbot page
+        >
+          <MessageCircle className="h-5 w-5" />
+          Chat with Assistant
+        </Button>
+      </div>
     </div>
   );
 };
