@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
-import { Activity, User, MapPin, MessageSquare, ArrowRight, HelpCircle, AlarmClock   MessageCircle,
+import { Activity, User, MapPin, MessageSquare, ArrowRight, HelpCircle, AlarmClock,   MessageCircle,
 } from "lucide-react";
 
 

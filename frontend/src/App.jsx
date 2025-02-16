@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import Chatbot from "./pages/Chatboat";
 import ImageUpload from "./pages/ImageUpload";
 import { Toaster } from "react-hot-toast";
+import HealthTracker from "./pages/HealthTracker";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,8 @@ const App = () => (
                 <Route path="/RemindMe" element={<RemindMe />} />
             <Route path="/chat" element={<Chatbot />} />
             <Route path="/image-upload" element={<ImageUpload />} />
+            <Route path="/healthtracker" element={<HealthTracker />} />
+
                 <Route path="*" element={<NotFound />} />
               </Routes>
           </main>
