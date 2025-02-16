@@ -1,27 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Header } from "@/components/layout/Header";
 import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
-import { useState } from "react";
-import { useAuthStore } from "../store/authUser.js";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
+import { loginUser, setLoading } from "../store/authSlice";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isLoggingIn } = useSelector((state) => state.auth);
 
-  const [email, getEmail] = useState("");
-  const [password, getPassword] = useState("");
-  const { login, isLoggingIn } = useAuthStore();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await login({ email, password });
-
-    if (result.success) {
-      navigate("/");
+    dispatch(setLoading(true));
+  
+    try {
+      const resultAction = await dispatch(loginUser({ email, password }));
+  
+      if (loginUser.fulfilled.match(resultAction)) {
+        toast.success("Login successful!");
+        navigate("/");
+      } else {
+        toast.error(resultAction.payload || "Login failed");
+      }
+    } catch (error) {
+      toast.error(error.message || "Login failed");
+    } finally {
+      dispatch(setLoading(false));
     }
   };
+  
+  
+  
 
   return (
     <div className="min-h-screen bg-[#1C2529]">
@@ -48,7 +64,7 @@ const Login = () => {
                   placeholder="Enter your email"
                   required
                   value={email}
-                  onChange={(e) => getEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>
@@ -63,7 +79,7 @@ const Login = () => {
                   placeholder="********"
                   required
                   value={password}
-                  onChange={(e) => getPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>

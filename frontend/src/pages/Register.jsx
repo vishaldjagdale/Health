@@ -4,11 +4,12 @@ import { Header } from "@/components/layout/Header";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { UserPlus } from "lucide-react";
-import { useAuthStore } from "../store/authUser.js";
+import { useDispatch } from "react-redux";
+import { setUser, setLoading } from "@/store/authSlice";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { signup } = useAuthStore();
+  const dispatch = useDispatch();
 
   const { searchParams } = new URL(document.location);
   const emailParam = searchParams.get("email");
@@ -19,10 +20,14 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch(setLoading(true));
 
-    console.log(username, email, password);
-    await signup({ username, email, password });
-    navigate("/");
+    // Simulating an API call
+    setTimeout(() => {
+      dispatch(setUser({ username, email }));
+      dispatch(setLoading(false));
+      navigate("/");
+    }, 1000);
   };
 
   return (
@@ -59,7 +64,7 @@ const Register = () => {
                 </label>
                 <Input
                   type="email"
-                  placeholder={emailParam ? emailParam : "xyz@example.com"}
+                  placeholder="xyz@example.com"
                   required
                   id="email"
                   value={email}

@@ -66,3 +66,21 @@
 .neo-blur {
   @apply backdrop-blur-2xl bg-black/40 border border-white/10;
 }
+
+/* Neon Glow Effect */
+.neon-glow-user {
+  box-shadow: 0 0 10px #3b82f6;
+}
+
+.neon-glow-bot {
+  box-shadow: 0 0 10px #6366f1;
+}
+
+/* Smooth scrolling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
