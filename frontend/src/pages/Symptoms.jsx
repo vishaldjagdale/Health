@@ -5,7 +5,7 @@ import { Activity, Search, PlusCircle } from "lucide-react";
 
 const Symptoms = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#1C2529]">
       <Header />
       <main className="container mx-auto px-4 pt-24">
         <div className="max-w-4xl mx-auto">

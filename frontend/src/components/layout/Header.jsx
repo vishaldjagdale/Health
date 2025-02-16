@@ -6,8 +6,8 @@ export const Header = () => {
   const navigate = useNavigate();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass-morphism">
-      <div className="container mx-auto px-4">
+    <header className="fixed top-0 left-0 right-0 z-50 glass-morphism ">
+      <div className="container mx-auto px-4 bg-[#141515]">
         <div className="flex items-center justify-between h-16">
           {/* Logo Section */}
           <div className="flex items-center space-x-2">

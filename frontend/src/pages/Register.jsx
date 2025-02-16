@@ -26,7 +26,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#1C2529]">
       <Header />
       <div className="container mx-auto px-4 pt-24">
         <div className="max-w-md mx-auto">

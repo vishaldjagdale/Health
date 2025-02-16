@@ -7,6 +7,7 @@ import { Activity, User, MapPin, MessageSquare, ArrowRight, HelpCircle, AlarmClo
 const Index = () => {
   const navigate = useNavigate();
 
+  
   const features = [
     {
       icon: Activity,
@@ -47,34 +48,40 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-[#1C2529] to-[#121618] overflow-hidden relative">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,...')] opacity-30" />
       <Header />
-      <main className="pt-24">
+
+      <main className="relative pt-24">
         {/* Hero Section */}
-        <section className="container mx-auto px-4 py-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 animate-fadeIn">
-            Smart Health Diagnosis Assistant
-          </h1>
-          <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto animate-fadeIn">
-            Track your symptoms, get preliminary diagnoses, and connect with specialists near you.
-          </p>
-          <div className="flex justify-center gap-4 animate-fadeIn">
-            <Button
-              size="lg"
-              onClick={() => navigate("/symptoms")}
-              className="bg-primary hover:bg-primary/90 text-white group"
-            >
-              Check Symptoms
-              <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => navigate("/register")}
-              className="border-white/20 text-white hover:bg-white/10"
-            >
-              Create Account
-            </Button>
+        <section className="container mx-auto px-4 py-16 text-center">
+          <div className="space-y-6 max-w-4xl mx-auto">
+            <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium tracking-wide animate-fadeIn">
+              Your Personal Health Assistant
+            </span>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 animate-fadeIn leading-tight">
+              Smart Health Diagnosis <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#c4b5fd]">Assistant</span>
+            </h1>
+            <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto animate-fadeIn leading-relaxed">
+              Track your symptoms, get preliminary diagnoses, and connect with specialists near you.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4 animate-fadeIn">
+              <Button
+                size="lg"
+                onClick={() => navigate("/symptoms")}
+                className="bg-primary hover:bg-primary/90 text-white group px-8 py-6 text-lg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 transition-all duration-300"
+              >
+                Check Symptoms <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => navigate("/register")}
+                className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-lg backdrop-blur-sm"
+              >
+                Create Account
+              </Button>
+            </div>
           </div>
         </section>
 
@@ -85,18 +92,30 @@ const Index = () => {
               <div
                 key={index}
                 onClick={() => navigate(feature.path)}
-                className="p-6 glass-morphism rounded-lg hover:bg-white/20 transition-all duration-300 cursor-pointer animate-fadeIn"
+                className="group p-8 rounded-2xl backdrop-blur-xl bg-white/[0.03] border border-white/[0.05] hover:bg-white/[0.07] transition-all duration-300 cursor-pointer"
                 style={{
-                  animationDelay: `${index * 100}ms`,
+                  animation: `fadeIn 0.5s ease-out forwards ${index * 0.1}s`,
+                  opacity: 0,
                 }}
               >
-                <feature.icon className="w-12 h-12 text-primary mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
-                <p className="text-white/80">{feature.description}</p>
+                <div className="flex flex-col items-start">
+                  <div className="rounded-2xl p-3 bg-primary/10 mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <feature.icon className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-primary transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-white/70 leading-relaxed group-hover:text-white/90 transition-colors">
+                    {feature.description}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         </section>
+
+        {/* Bottom Gradient */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#121618] to-transparent" />
       </main>
     </div>
   );

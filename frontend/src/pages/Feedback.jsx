@@ -34,7 +34,7 @@ const Feedback = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white">
+    <div className="min-h-screen bg-[#1C2529] text-white">
       <Header />
       <main className="container mx-auto px-4 pt-24">
         <div className="max-w-3xl mx-auto">
