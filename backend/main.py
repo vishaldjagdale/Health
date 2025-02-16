@@ -74,3 +74,11 @@ async def predict_disease(file: UploadFile = File(...)):
     predicted_class = CLASS_NAMES[np.argmax(prediction)]  # Get the highest probability class
     
     return {"disease": predicted_class}
+
+
+
+
+
+
+
+

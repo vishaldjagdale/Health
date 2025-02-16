@@ -20,16 +20,19 @@ const Index = () => {
       icon: Activity,
       title: "Symptom Analysis",
       description: "Advanced symptom tracking and analysis for accurate predictions",
+      link: "/symptoms", // ✅ Clickable
     },
     {
       icon: User,
       title: "Specialist Matching",
       description: "Connect with the right medical specialists for your condition",
+      link: "/specialists", // ✅ Clickable
     },
     {
       icon: MapPin,
       title: "Location-Based",
       description: "Find healthcare providers in your area",
+      link: "/locations", // ✅ Clickable
     },
     {
       icon: MessageSquare,

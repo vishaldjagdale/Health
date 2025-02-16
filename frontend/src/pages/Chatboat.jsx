@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { fetchChatResponse } from "../utils/chatApi";
 import { FaPaperPlane } from "react-icons/fa";
+import { Header } from "@/components/layout/Header";
 
 function Chatbot() {
     const [messages, setMessages] = useState([]);
@@ -31,6 +32,7 @@ function Chatbot() {
     };
 
     return (
+       
         <div className="flex flex-col w-full max-w-lg mx-auto min-h-screen bg-black items-center justify-center p-4">
             {/* Chatbox Container */}
             <div className="w-full bg-opacity-20 bg-white/10 backdrop-blur-md shadow-lg rounded-2xl p-4 border border-gray-700">

@@ -17,7 +17,7 @@ const Feedback = () => {
           </div>
 
           <div className="glass-morphism rounded-lg p-6 mb-8">
-            <h2 className="text-xl font-semibold text-white mb-4">Your Recent Experience</h2>
+            <h2 className="text-xl font-semibold text-white mb-4"> Comment Your Recent Experience</h2>
             <form className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm text-white/80">Rate your experience</label>

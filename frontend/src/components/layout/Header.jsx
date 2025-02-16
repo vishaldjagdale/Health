@@ -8,6 +8,7 @@ export const Header = () => {
   const { user } = useSelector((store) => store.auth); 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  console.log("User from Redux:", user);
 
   const logoutHandler = () => {
     dispatch(logoutUser()); // Clears user session from Redux
@@ -74,7 +75,7 @@ export const Header = () => {
           ) : (
             <div className="flex items-center space-x-4">
               <span className="text-white">
-                Welcome, {user.username || "User"}!
+                Welcome, {user?.user.username || "User"}!
               </span>
               <Button
                 onClick={logoutHandler}

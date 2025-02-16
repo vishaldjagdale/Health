@@ -1,6 +1,4 @@
 import React from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -21,6 +19,7 @@ import RemindMe from "./pages/RemindMe";
 import NotFound from "./pages/NotFound";
 import Chatbot from "./pages/Chatboat";
 import ImageUpload from "./pages/ImageUpload";
+import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +29,7 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
+        {/* <Sonner /> */}
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
