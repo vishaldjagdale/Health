@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
-import { Activity, User, MapPin, MessageSquare, ArrowRight, HelpCircle, AlarmClock ,  MessageCircle,
+import { Footer } from "react-day-picker";
+import { Activity, User, MapPin, MessageSquare, ArrowRight, HelpCircle, AlarmClock ,  MessageCircle, Camera
 } from "lucide-react";
+// import { icon } from "leaflet";
+// import { title } from "process";
 
 
 const Index = () => {
@@ -30,19 +33,28 @@ const Index = () => {
     },
     {
       icon: MessageSquare,
-      title: "Feedback System",
+      title: "Feedback",
       description: "Contribute to improving diagnosis accuracy",
       path: "/feedback",
     },
     {
       icon: HelpCircle,
-      title: "WhatIf",
+      title: "What-If",
+      
       description: "Explore health impacts of your lifestyle choices",
+      path:"/WhatIf"
     },
     {
       icon: AlarmClock,
       title: "RemindMe",
       description: "Set reminders for your medications",
+      path:"/RemindMe"
+    },
+    {
+      icon: Camera,
+      title:"ImageUpload",
+      description:"Upload your skin image",
+      path:"/ImageUpload"
     },
   ];
 

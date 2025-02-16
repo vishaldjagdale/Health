@@ -16,7 +16,7 @@ import Locations from "./pages/Locations";
 import Feedback from "./pages/Feedback";
 import WhatIf from "./pages/WhatIf";
 import RemindMe from "./pages/RemindMe";
-import Footer from "@/components/layout/Footer";
+// import Footer from "@/components/layout/Footer";
 import { Header } from "./components/layout/Header"; // ✅ Import Footer
 
 import NotFound from "./pages/NotFound";
@@ -46,12 +46,12 @@ const App = () => (
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/whatif" element={<WhatIf />} />
                 <Route path="/RemindMe" element={<RemindMe />} />
-            <Route path="/chat" element={<Chatbot />} />
-            <Route path="/image-upload" element={<ImageUpload />} />
+                <Route path="/chat" element={<Chatbot />} />
+                <Route path="/imageupload" element={<ImageUpload />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
           </main>
-          <Footer /> {/* ✅ Add Footer at the bottom */}
+          {/* <Footer /> ✅ Add Footer at the bottom */}
         </div>
         </BrowserRouter>
       </TooltipProvider>

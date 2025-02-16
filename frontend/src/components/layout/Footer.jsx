@@ -1,61 +1,71 @@
-import { Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Twitter, Linkedin, Mail } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1C2529] border-t border-white/20 text-white py-10">
+    <footer className="bg-[#1C2529] border-t border-white/10 text-white py-2">
       <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
-          
-          {/* Left Section - Branding */}
-          <div className="space-y-2">
-            {/* <h2 className="text-3xl font-bold text-white">HealthFinder</h2>
-            <p className="text-white/70">Your trusted healthcare companion</p> */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+
+          {/* Branding Section */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">HealthNodes</h2>
+            <p className="text-white/60">
+              AI-powered healthcare solutions
+            </p>
+            <div className="flex gap-3 text-white/60">
+              
+              <SocialIcon href="https://instagram.com/_jagdalevishal" icon={<Instagram className="w-4 h-4" />} />
+              
+              <SocialIcon href="https://linkedin.com/in/vishal-jagdale" icon={<Linkedin className="w-4 h-4" />} />
+            </div>
           </div>
 
-          {/* Middle Section - Navigation */}
-          <nav className="flex gap-6 text-white/80">
-            <FooterLink href="#">Hospitals</FooterLink>
-            <FooterLink href="#">About</FooterLink>
-            <FooterLink href="#">Contact</FooterLink>
+          {/* Navigation */}
+          <nav className="space-y-2">
+            <h3 className="font-medium text-white/90">Quick Links</h3>
+            <FooterLink href="/Locations">Medical Centers</FooterLink>
+            <FooterLink href="/Specialists">Specialists</FooterLink>
+            <FooterLink href="https://youtu.be/5YNKDTfDuD0">Mental Health</FooterLink>
+            <FooterLink href="https://instagram.com/_jagdalevishal">Contact</FooterLink>
           </nav>
 
-          {/* Right Section - Social Media Links */}
-          <div className="flex gap-5">
-            <SocialIcon href="#" icon={<Facebook className="w-6 h-6" />} />
-            <SocialIcon href="https://www.instagram.com/_jagdalevishal?igsh=MWxzdnlmaWc5Zmd4Yg==" icon={<Instagram className="w-6 h-6" />} />
-            <SocialIcon href="#" icon={<Twitter className="w-6 h-6" />} />
-            <SocialIcon href="" icon={<Linkedin className="w-6 h-6" />} />
+          {/* Contact */}
+          <div className="space-y-2">
+            <h3 className="font-medium text-white/90">Contact</h3>
+            <FooterLink href="mailto:support@healthnodes.com">
+              <Mail className="w-4 h-4 mr-1 inline" />
+              vishaljagdale6168@gmail.com
+            </FooterLink>
           </div>
+
         </div>
 
-        {/* Copyright Section */}
-        <div className="border-t border-white/20 mt-8 pt-4 text-center text-white/60 text-sm">
-          &copy; {new Date().getFullYear()} 
-        </div>
+        {/* Copyright */}
+        {/* <div className="border-t border-white/10 mt-8 pt-6 text-center text-white/50 text-sm">
+          <p>&copy; {new Date().getFullYear()} HealthNodes. All rights reserved.</p>
+        </div> */}
       </div>
     </footer>
   );
 };
 
-// Reusable Footer Link Component
-const FooterLink = ({ href, children }) => (
-  <a
-    href={href}
-    className="transition-all duration-300 hover:text-white hover:underline"
-  >
-    {children}
-  </a>
-);
-
-// Social Media Icon Component
 const SocialIcon = ({ href, icon }) => (
   <a
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="p-2 rounded-full transition-all duration-300 hover:bg-white/20"
+    className="hover:text-white transition-colors"
   >
     {icon}
+  </a>
+);
+
+const FooterLink = ({ href, children }) => (
+  <a
+    href={href}
+    className="block text-white/60 hover:text-white transition-colors py-1"
+  >
+    {children}
   </a>
 );
 
