@@ -5,23 +5,23 @@ import { User, MapPin, Star, Search } from "lucide-react";
 
 const specialists = [
   {
-    name: "Dr. Sarah Johnson",
-    specialty: "Cardiologist",
-    location: "New York, NY",
-    rating: 4.8,
-    available: true,
-  },
-  {
-    name: "Dr. Michael Chen",
-    specialty: "Neurologist",
-    location: "San Francisco, CA",
+    name: "Dr. Vishal Jagdale",
+    specialty: "Chirphad Specialist",
+    location: "Pune, India",
     rating: 4.9,
     available: true,
   },
   {
-    name: "Dr. Emily Williams",
-    specialty: "Dermatologist",
-    location: "Boston, MA",
+    name: "Dr. Kisruu",
+    specialty: "Mulvyad Specialist",
+    location: "Latur , Maharashtra",
+    rating: 4.9,
+    available: true,
+  },
+  {
+    name: "Dr. Russel",
+    specialty: "Dang Specialist",
+    location: "Dang , Maharashtra",
     rating: 4.7,
     available: false,
   },
