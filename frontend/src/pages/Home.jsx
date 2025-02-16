@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Activity, User, MapPin, MessageSquare, ArrowRight, HelpCircle, AlarmClock } from "lucide-react";
 
+
 const Index = () => {
   const navigate = useNavigate();
 
@@ -33,7 +34,7 @@ const Index = () => {
     },
     {
       icon: HelpCircle,
-      title: "WhatIf",
+      title: "Let's Ask",
       description: "Search what will happen if you eat healthy or unhealthy from today",
       path: "/whatif",
     },

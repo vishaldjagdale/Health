@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,42 +7,55 @@ import { MapPin, Navigation, Search } from "lucide-react";
 const Locations = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Handle geolocation-based search
-  const handleUseMyLocation = () => {
+  useEffect(() => {
+    requestUserLocation();
+  }, []);
+
+  // Request user location and fetch hospitals
+  const requestUserLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
+      setError("Geolocation is not supported by your browser.");
       return;
     }
 
     setLoading(true);
-
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      ({ coords }) => {
         setLoading(false);
-        const { latitude, longitude } = position.coords;
-        const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=hospitals&query_place_id=${latitude},${longitude}`;
-        window.open(googleMapsUrl, "_blank"); // Open Google Maps
+        openGoogleMaps(coords.latitude, coords.longitude);
       },
       (error) => {
         setLoading(false);
-        let errorMessage = "Unable to retrieve location.";
-        if (error.code === 1) errorMessage = "Permission denied. Enable location services.";
-        if (error.code === 2) errorMessage = "Location unavailable. Try again.";
-        if (error.code === 3) errorMessage = "Request timed out. Move to an open area.";
-        alert(errorMessage);
+        handleLocationError(error);
       }
     );
   };
 
-  // Handle manual location search
+  // Handle manual search for hospitals
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       alert("Please enter a location to search.");
       return;
     }
-    const googleMapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(searchQuery)}`;
-    window.open(googleMapsUrl, "_blank");
+    window.open(`https://www.google.com/maps/search/${encodeURIComponent(searchQuery)} hospitals`, "_blank");
+  };
+
+  // Open Google Maps with hospitals near given coordinates
+  const openGoogleMaps = (lat, lon) => {
+    const url = `https://www.google.com/maps/search/?api=1&query=hospitals&query_place_id=${lat},${lon}`;
+    window.open(url, "_blank");
+  };
+
+  // Handle location errors
+  const handleLocationError = (error) => {
+    const errorMessages = {
+      1: "Permission denied. Please enable location access.",
+      2: "Location unavailable. Try again later.",
+      3: "Request timed out. Move to an open area.",
+    };
+    setError(errorMessages[error.code] || "Failed to retrieve location.");
   };
 
   return (
@@ -59,6 +72,8 @@ const Locations = () => {
 
           {/* Search Box */}
           <div className="glass-morphism rounded-lg p-6">
+            {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
             <div className="flex flex-col gap-4">
               <Input
                 placeholder="Enter city, hospital name, or zip code..."
@@ -70,7 +85,7 @@ const Locations = () => {
               {/* Action Buttons */}
               <div className="flex flex-col md:flex-row gap-4">
                 <ActionButton
-                  onClick={handleUseMyLocation}
+                  onClick={requestUserLocation}
                   loading={loading}
                   icon={<Navigation className="w-5 h-5 mr-2" />}
                   text="Find Hospitals Near Me"
