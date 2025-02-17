@@ -43,39 +43,24 @@ const Chatbot = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 to-teal-900 p-4">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 to-slate-900 p-2">
             {/* Chatbox Container */}
             <motion.div 
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-2xl bg-opacity-30 bg-white/5 backdrop-blur-2xl shadow-2xl rounded-3xl p-6 border border-teal-400/20 relative"
+                className="w-full max-w-md bg-opacity-30 bg-white/5 backdrop-blur-2xl shadow-2xl rounded-2xl p-4 border border-teal-400/20 relative"
             >
-                {/* Floating Particles */}
-                <div className="absolute top-0 left-0 w-10 h-10 overflow-hidden rounded-3xl">
-                    {[...Array(20)].map((_, i) => (
-                        <div 
-                            key={i}
-                            className="absolute w-1 h-1 bg-teal-400/30 rounded-full"
-                            style={{
-                                top: `${Math.random() * 100}%`,
-                                left: `${Math.random() * 100}%`,
-                                animation: `float ${5 + Math.random() * 10}s infinite`
-                            }}
-                        />
-                    ))}
-                </div>
-
                 {/* Header */}
-                <div className="flex items-center justify-center mb-6 space-x-3">
-                    <FaClinicMedical className="text-3xl text-teal-400 animate-pulse" />
-                    <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400">
+                <div className="flex items-center justify-center mb-4 space-x-3">
+                    <FaClinicMedical className="text-2xl text-teal-400 animate-pulse" />
+                    <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400">
                         HealthNodes AI
                     </h2>
                 </div>
-
+    
                 {/* Chat Window */}
-                <div className="h-[500px] overflow-y-auto p-4 border border-teal-400/20 rounded-xl bg-slate-900/30 backdrop-blur-md shadow-inner custom-scrollbar">
+                <div className="h-[350px] overflow-y-auto p-3 border border-teal-400/20 rounded-lg bg-slate-900/30 backdrop-blur-md shadow-inner custom-scrollbar">
                     <AnimatePresence initial={false}>
                         {messages.map((msg, index) => (
                             <motion.div
@@ -85,90 +70,83 @@ const Chatbot = () => {
                                 animate="visible"
                                 exit="exit"
                                 transition={{ duration: 0.3 }}
-                                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} mb-4`}
+                                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} mb-3`}
                             >
-                                <div className={`flex items-start gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
+                                <div className={`flex items-start gap-2 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
                                     <div className={`p-2 rounded-full shadow-md ${msg.role === "user" ? "bg-blue-500" : "bg-teal-500"}`}>
                                         {msg.role === "user" ? (
-                                            <FaUser className="text-white text-lg" />
+                                            <FaUser className="text-white text-sm" />
                                         ) : (
-                                            <FaRobot className="text-white text-lg" />
+                                            <FaRobot className="text-white text-sm" />
                                         )}
                                     </div>
                                     <div 
-                                        className={`p-4 text-white max-w-md rounded-2xl shadow-lg transition-all duration-300 ${
+                                        className={`p-3 text-white max-w-[250px] rounded-xl shadow-lg transition-all duration-300 text-sm ${
                                             msg.role === "user" 
                                                 ? "bg-blue-600/90 border border-blue-400/30"
                                                 : "bg-slate-800/90 border border-teal-400/30"
                                         }`}
                                     >
-                                        <p className="leading-relaxed text-sm">{msg.content}</p>
+                                        <p className="leading-relaxed">{msg.content}</p>
                                     </div>
                                 </div>
                             </motion.div>
                         ))}
                     </AnimatePresence>
-
+    
                     {/* Typing Indicator */}
                     {loading && (
-                       <motion.div 
-    initial={{ scale: 0.8, opacity: 0 }}
-    animate={{ scale: 1, opacity: 1 }}
-    transition={{ duration: 0.5 }}
-    className="w-full max-w-lg bg-opacity-30 bg-white/5 backdrop-blur-2xl shadow-2xl rounded-3xl p-6 border border-teal-400/20 relative"
->
-
-                            <div className="flex space-x-1">
-                                <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce"></div>
-                                <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce delay-100"></div>
-                                <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce delay-200"></div>
-                            </div>
-                            <span className="text-sm">Analyzing your query...</span>
+                        <motion.div 
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 0.5 }}
+                            className="flex items-center space-x-1"
+                        >
+                            <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce delay-100"></div>
+                            <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce delay-200"></div>
+                            <span className="text-xs text-gray-300">Analyzing your query...</span>
                         </motion.div>
                     )}
                     
                     <div ref={chatEndRef}></div>
                 </div>
-
+    
                 {/* Input Box */}
                 <motion.div 
                     whileHover={{ scale: 1.01 }}
-                    className="flex mt-4 border border-teal-400/20 rounded-xl bg-slate-900/30 backdrop-blur-lg shadow-lg overflow-hidden"
+                    className="flex mt-3 border border-teal-400/20 rounded-lg bg-slate-900/30 backdrop-blur-lg shadow-lg overflow-hidden"
                 >
                     <input
                         type="text"
-                        className="w-full p-4 text-white bg-transparent border-none outline-none placeholder-gray-400 font-medium"
-                        placeholder="Describe your symptoms or ask a question..."
+                        className="w-full p-3 text-white bg-transparent border-none outline-none placeholder-gray-400 text-sm"
+                        placeholder="Ask a health question..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleSend()}
                     />
                     <motion.button 
                         whileTap={{ scale: 0.95 }}
-                        className="bg-gradient-to-r from-teal-500 to-blue-500 text-white px-6 py-4 hover:from-teal-600 hover:to-blue-600 transition-all flex items-center gap-2"
+                        className="bg-gradient-to-r from-teal-500 to-blue-500 text-white px-4 py-3 hover:from-teal-600 hover:to-blue-600 transition-all flex items-center gap-1 text-sm"
                         onClick={handleSend}
                     >
-                        <FaPaperPlane className="text-sm" />
-                        <span className="hidden sm:inline">Send</span>
+                        <FaPaperPlane />
                     </motion.button>
                 </motion.div>
             </motion.div>
-
+    
             {/* Footer */}
             <motion.p 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                className="mt-6 text-sm text-teal-400/80 flex items-center gap-2"
+                className="mt-4 text-xs text-teal-400/80"
             >
-                <span>🔒 HealthNodes</span>
-                <span>•</span>
-                <span>Powered by CodeX</span>
-                
-               
+                🔒 HealthNodes • Powered by CodeX
             </motion.p>
         </div>
     );
+    
 };
 
 export default Chatbot;
