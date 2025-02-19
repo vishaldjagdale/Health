@@ -7,13 +7,18 @@ import ENV_VARS from "../utils/ENV_Var.js";
 import dotenv from "dotenv";
 dotenv.config();
 
+// 🔹 REGISTER
 const register = async (req, res) => {
   try {
     const { username, email, password, avatar } = req.body;
-    const user = new User({ username, email, password, avatar });
+
+    // 🔹 Hash the password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ username, email, password: hashedPassword, avatar });
+
     await user.save();
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -22,12 +27,23 @@ const register = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
-    res.status(201).json({ token });
+    // ✅ Return user details
+    res.status(201).json({
+      message: "Registration successful",
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar,
+      },
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
+// 🔹 LOGIN
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -37,30 +53,39 @@ const login = async (req, res) => {
       return res.status(401).json({ error: "User not found" });
     }
 
-    const isValid = await user.comparePassword(password);
+    // 🔹 Ensure password comparison works
+    const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
       return res.status(401).json({ error: "Invalid password" });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV !== "development",
     });
 
+    // ✅ Return user details along with token
     res.json({
-      token,
       message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar,
+      },
     });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-const forgotpassword = async (req, res) => {
+// 🔹 FORGOT PASSWORD
+const forgotPassword = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -68,22 +93,16 @@ const forgotpassword = async (req, res) => {
     }
 
     let { email, password } = req.body;
-    password = await bcrypt.hash(password, 10);
-    await User.findOneAndUpdate(
-      { email: email },
-      { $set: { password: password } },
-      { new: true }
-    );
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await User.findOneAndUpdate({ email }, { $set: { password: hashedPassword } }, { new: true });
 
     return res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
+// 🔹 LOGOUT
 const logout = async (req, res) => {
   try {
     res.cookie("token", "", {
@@ -220,7 +239,7 @@ export default {
   register,
   login,
   logout,
-  forgotpassword,
+  forgotPassword,
   sendOTP,
   verifyOTP,
   resetPassword,

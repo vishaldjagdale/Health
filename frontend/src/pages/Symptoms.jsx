@@ -1,11 +1,78 @@
+import { useState, useEffect } from "react";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Activity, Search, PlusCircle } from "lucide-react";
+import "regenerator-runtime/runtime";
+import { Activity, Mic, MicOff, PlusCircle, XCircle } from "lucide-react";
+import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 
 const Symptoms = () => {
+  const [symptoms, setSymptoms] = useState("");
+  const [prediction, setPrediction] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [isClearing, setIsClearing] = useState(false); // Prevents speech from overriding manual clear
+
+  // Speech Recognition Hook
+  const { transcript, listening, resetTranscript } = useSpeechRecognition();
+
+  // Sync speech input with symptoms (only if not manually clearing)
+  useEffect(() => {
+    if (!isClearing) {
+      setSymptoms(transcript);
+    }
+  }, [transcript, isClearing]);
+
+  // Handle Voice Input
+  const handleVoiceInput = () => {
+    if (!listening) {
+      SpeechRecognition.startListening({ continuous: true, language: "en-US" });
+    } else {
+      SpeechRecognition.stopListening();
+    }
+  };
+
+  // Handle Clear Input
+  const handleClear = () => {
+    setIsClearing(true); // Prevent speech input update
+    setSymptoms("");
+    resetTranscript(); // Reset speech recognition transcript
+    setTimeout(() => setIsClearing(false), 500); // Re-enable speech updates after clearing
+  };
+
+  // Handle Symptom Check
+  const handleCheckSymptoms = async () => {
+    if (!symptoms.trim()) {
+      setError("Please enter symptoms.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("user_input", symptoms);
+
+      const response = await fetch("http://127.0.0.1:8000/predict", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch prediction");
+      }
+
+      const data = await response.json();
+      setPrediction(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#1C2529]">
       <Header />
       <main className="container mx-auto px-4 pt-24">
         <div className="max-w-4xl mx-auto">
@@ -19,24 +86,31 @@ const Symptoms = () => {
             <div className="glass-morphism rounded-lg p-6">
               <div className="flex gap-4 mb-6">
                 <Input
-                  placeholder="Search symptoms..."
+                  value={symptoms} // Keeps updated with speech input
+                  onChange={(e) => setSymptoms(e.target.value)}
+                  placeholder="Enter your symptoms or use voice input..."
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
-                <Button className="bg-primary hover:bg-primary/90">
-                  {/* <Search className="w-4 h-4 mr-2" /> */}
-                  Check 
+                <Button className="bg-primary hover:bg-primary/90" onClick={handleCheckSymptoms} disabled={loading}>
+                  {loading ? "Checking..." : "Check"}
+                </Button>
+                <Button className="bg-secondary hover:bg-secondary/80" onClick={handleVoiceInput}>
+                  {listening ? <MicOff className="text-red-500" /> : <Mic />}
+                </Button>
+                <Button className="bg-red-500 hover:bg-red-600" onClick={handleClear}>
+                  <XCircle />
                 </Button>
               </div>
 
-              <div className="space-y-4">
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start text-white border-white/20 hover:bg-white/10"
-                >
-                  <PlusCircle className="w-4 h-4 mr-2" />
-                  Add Symptom
-                </Button>
-              </div>
+              {error && <p className="text-red-500">{error}</p>}
+
+              {prediction && (
+                <div className="mt-4 p-4 bg-white/10 rounded-lg">
+                  <h2 className="text-lg font-semibold text-white">Prediction Result:</h2>
+                  <p className="text-white">Main Disease: {prediction.main_disease}</p>
+                  <p className="text-white">Sub Disease: {prediction.sub_disease}</p>
+                </div>
+              )}
             </div>
 
             <div className="glass-morphism rounded-lg p-6">
@@ -47,6 +121,7 @@ const Symptoms = () => {
                     key={symptom}
                     variant="outline"
                     className="justify-start text-white border-white/20 hover:bg-white/10"
+                    onClick={() => setSymptoms(symptom)}
                   >
                     {symptom}
                   </Button>

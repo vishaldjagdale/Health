@@ -2,17 +2,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Header } from "@/components/layout/Header";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { UserPlus } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setUser, setLoading } from "@/store/authSlice";
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const { searchParams } = new URL(document.location);
+  const emailParam = searchParams.get("email");
+
+  const [email, setEmail] = useState(emailParam ? emailParam : "");
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch(setLoading(true));
+
+    // Simulating an API call
+    setTimeout(() => {
+      dispatch(setUser({ username, email }));
+      dispatch(setLoading(false));
+      navigate("/");
+    }, 1000);
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#1C2529]">
       <Header />
       <div className="container mx-auto px-4 pt-24">
         <div className="max-w-md mx-auto">
@@ -26,36 +45,45 @@ const Register = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="name" className="text-sm text-white/80">
-                  {User.name}
+                  Full Name
                 </label>
                 <Input
-                  id="name"
                   type="text"
                   placeholder="Enter your full name"
+                  required
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUserName(e.target.value)}
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm text-white/80">
-                  {user.email}
+                  Email
                 </label>
                 <Input
-                  id="email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="xyz@example.com"
+                  required
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="password" className="text-sm text-white/80">
-                  {user.password}
+                  Password
                 </label>
                 <Input
-                  id="password"
                   type="password"
-                  placeholder="Create a password"
+                  placeholder="********"
+                  required
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>
