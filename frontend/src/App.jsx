@@ -15,6 +15,8 @@ import Feedback from "./pages/Feedback";
 import WhatIf from "./pages/WhatIf";
 import RemindMe from "./pages/RemindMe";
 import NotFound from "./pages/NotFound"; // Not Found should be the last route
+import Chatbot from "./pages/Chatboat";
+import ImageUpload from "./pages/ImageUpload";
 
 
 const queryClient = new QueryClient();
@@ -35,6 +37,9 @@ const App = () => (
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/whatif" element={<WhatIf />} />
           <Route path="/RemindMe" element={<RemindMe />} />
+          <Route path="/chat" element={<Chatbot />} />
+          <Route path="/image-upload" element={<ImageUpload />} />
+
 
           <Route path="*" element={<NotFound />} /> {/* Keep this at the end */}
         </Routes>
