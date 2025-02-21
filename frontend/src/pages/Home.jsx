@@ -62,7 +62,13 @@ const Index = () => {
       title:"Scan",
       description:"Know your skin",
       path:"/ImageUpload"
-    },
+    },{
+      icon: Camera,
+      title:"News",
+      description:"Know your skin",
+      path:"/news"
+      
+    }
   ];
 
   return (
@@ -213,7 +219,7 @@ const Index = () => {
             <span>•</span>
             <a href="/terms" className="hover:text-white transition-colors">Terms of Service</a>
             <span>•</span>
-            <a href="/contact" className="hover:text-white transition-colors">Contact Us</a>
+            <a href="https://github/vishaldjagdale" className="hover:text-white transition-colors">Contact Us</a>
           </div>
           <p>© {new Date().getFullYear()} HealthNodes. All rights reserved.</p>
         </div>

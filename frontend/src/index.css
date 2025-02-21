@@ -113,3 +113,24 @@
 .animate-rotate-reverse {
     animation: rotate-reverse 90s linear infinite;
 }
+
+@keyframes float {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        transform: translateY(-100vh) rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 0.1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.2;
+        transform: scale(1.1);
+    }
+}

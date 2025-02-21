@@ -35,6 +35,31 @@ const specialists = [
   },
 ];
 
+for (let i = 4; i <= 50; i++) {
+  specialists.push({
+    name: `Dr. Random ${i}`,
+    specialty: [
+      "Cardiologist", "Neurologist", "Orthopedic", "Dermatologist", "Pediatrician", 
+      "Psychiatrist", "ENT Specialist", "Ophthalmologist", "Urologist", "Endocrinologist"
+    ][Math.floor(Math.random() * 10)],
+    location: [
+      "Mumbai, India", "Delhi, India", "Bangalore, India", "Hyderabad, India", "Chennai, India",
+      "Kolkata, India", "Ahmedabad, India", "Pune, India", "Jaipur, India", "Lucknow, India"
+    ][Math.floor(Math.random() * 10)],
+    rating: (Math.random() * (5 - 3.5) + 3.5).toFixed(1),
+    experience: `${Math.floor(Math.random() * 25) + 1} years`,
+    availability: [
+      "Today 9 AM - 1 PM", "Tomorrow 2 PM - 6 PM", "Available this weekend",
+      "Next week slots available", "Currently unavailable"
+    ][Math.floor(Math.random() * 5)],
+    consultationFee: `₹${Math.floor(Math.random() * 1500) + 500}`,
+    isNew: Math.random() > 0.8
+  });
+}
+
+console.log(specialists);
+
+
 const Specialists = () => {
   return (
     <div className="min-h-screen bg-[#1C2529]">

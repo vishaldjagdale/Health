@@ -53,7 +53,7 @@ const Symptoms = () => {
       const formData = new FormData();
       formData.append("user_input", symptoms);
 
-      const response = await fetch("http://127.0.0.1:8000/predict", {
+      const response = await fetch("https://52bqxg0m-8000.inc1.devtunnels.ms/predict", {
         method: "POST",
         body: formData,
       });

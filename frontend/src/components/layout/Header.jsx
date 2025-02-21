@@ -6,6 +6,8 @@ import { logoutUser } from "@/store/authSlice"; // Ensure this Redux action clea
 
 export const Header = () => {
   const { user } = useSelector((store) => store.auth); 
+
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   console.log("User from Redux:", user);

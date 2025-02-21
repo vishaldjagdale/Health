@@ -16,6 +16,8 @@ import Locations from "./pages/Locations";
 import Feedback from "./pages/Feedback";
 import WhatIf from "./pages/WhatIf";
 import RemindMe from "./pages/RemindMe";
+import DietPlanGenerator from "./pages/DietPlanGenerator";
+import News from "./pages/News";
 // import Footer from "@/components/layout/Footer";
 import { Header } from "./components/layout/Header"; // ✅ Import Footer
 
@@ -49,7 +51,9 @@ const App = () => (
                 <Route path="/RemindMe" element={<RemindMe />} />
                 <Route path="/chat" element={<Chatbot />} />
                 <Route path="/imageupload" element={<ImageUpload />} />
+                <Route path="/dietplangenerator" element={<DietPlanGenerator />} />
             <Route path="/healthtracker" element={<HealthTracker />} />
+            <Route path="/news" element={<News />} />
 
                 <Route path="*" element={<NotFound />} />
               </Routes>
