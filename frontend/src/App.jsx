@@ -4,8 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import store, { persistor } from "./store/store";  // ✅ Ensure correct import
-
+import store, { persistor } from "./store/store"; // ✅ Ensure correct import
 
 import Index from "./pages/Home";
 import Login from "./pages/Login";
@@ -20,8 +19,7 @@ import DietPlanGenerator from "./pages/DietPlanGenerator";
 import News from "./pages/News";
 // import Footer from "@/components/layout/Footer";
 import { Header } from "./components/layout/Header"; // ✅ Import Footer
-
-import NotFound from "./pages/NotFound";
+import NotFound from "./pages/NotFound"; // Not Found should be the last route
 import Chatbot from "./pages/Chatboat";
 import ImageUpload from "./pages/ImageUpload";
 import { Toaster } from "react-hot-toast";

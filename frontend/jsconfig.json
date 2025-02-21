@@ -1,19 +1,21 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./jsconfig.app.json" },
-    { "path": "./jsconfig.node.json" }
-  ],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
+    "target": "es6",
+    "module": "commonjs",
     "noImplicitAny": false,
     "noUnusedParameters": false,
     "skipLibCheck": true,
     "allowJs": true,
     "noUnusedLocals": false,
-    "strictNullChecks": false
-  }
+    "strictNullChecks": false,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["src/**/*"]
 }

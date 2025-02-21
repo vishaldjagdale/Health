@@ -13,7 +13,10 @@ const auth = async (req, res, next) => {
     req.userId = decoded.userId;
     next();
   } catch (error) {
-    res.status(401).json({ error: "Please authenticate" });
+    res.status(401).json({
+      success: false,
+      error: "Please authenticate",
+    });
   }
 };
 

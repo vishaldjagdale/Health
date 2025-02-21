@@ -38,13 +38,18 @@ const Locations = () => {
       setError("Please enter a location to search");
       return;
     }
-    window.open(`https://www.google.com/maps/search/${encodeURIComponent(searchQuery)} hospitals`, "_blank");
+    window.open(
+      `https://www.google.com/maps/search/${encodeURIComponent(
+        searchQuery
+      )} hospitals`,
+      "_blank"
+    );
   };
 
   const openGoogleMaps = (lat, lon) => {
     const url = `https://www.google.com/maps/search/?api=1&query=hospitals&query_place_id=${lat},${lon}`;
     window.open(url, "_blank");
-  };
+  }; ///////////////////////////////////////////////////////////////// CHANGE HERE /////////////////////////////////////////////////////////////////
 
   const handleLocationError = (error) => {
     const errorMessages = {
@@ -58,11 +63,11 @@ const Locations = () => {
   return (
     <div className="min-h-screen bg-[#1C2529]">
       <Header />
-      
+
       <main className="container mx-auto px-4 pt-14">
         <div className="max-w-3xl mx-auto">
           {/* Animated Header */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
@@ -74,7 +79,9 @@ const Locations = () => {
             <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent mb-3">
               Medical Locator
             </h1>
-            <p className="text-white/80 text-lg">Find trusted healthcare facilities near you</p>
+            <p className="text-white/80 text-lg">
+              Find trusted healthcare facilities near you
+            </p>
           </motion.div>
 
           {/* Search Section */}
