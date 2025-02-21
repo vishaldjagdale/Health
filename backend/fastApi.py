@@ -41,28 +41,28 @@ class Challenge(BaseModel):
     challenge_name: str
     completed_days: int
 
-@app.post("/track-habit")
+@app.post("/track-habit") # -- ///////
 async def track_habit(habit: Habit):
     if habit.user_id not in user_habits:
         user_habits[habit.user_id] = []
     user_habits[habit.user_id].append(habit)
     return {"message": "Habit tracked successfully"}
 
-@app.post("/join-challenge")
+@app.post("/join-challenge") # -- ///////
 async def join_challenge(challenge: Challenge):
     if challenge.user_id not in user_challenges:
         user_challenges[challenge.user_id] = []
     user_challenges[challenge.user_id].append(challenge)
     return {"message": "Challenge joined successfully"}
 
-@app.get("/user-progress/{user_id}")
+@app.get("/user-progress/{user_id}") # -- /////
 async def get_user_progress(user_id: str):
     return {
         "habits": user_habits.get(user_id, []),
         "challenges": user_challenges.get(user_id, [])
     }
     
-@app.post("/increment-habit")
+@app.post("/increment-habit") # --  ///////
 async def increment_habit(data: dict):
     user_id = data["user_id"]
     habit_name = data["habit_name"]

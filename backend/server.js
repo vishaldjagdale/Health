@@ -7,6 +7,10 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 import authRoutes from "./routes/auth.routes.js";
+import otherRoutes from "./routes/other.routes.js";
+
+import startEmailScheduler from "./Job/emailScheduler.js";
+import { start } from "repl";
 
 // Validate required environment variables
 
@@ -25,6 +29,7 @@ app.use(
 );
 
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/other", otherRoutes);
 
 if (!process.env.MONGODB_URI) {
   console.error("MONGODB_URI is not defined in environment variables");
@@ -35,7 +40,10 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("Connected to MongoDB"))
+  .then(() => {
+    console.log("Connected to MongoDB");
+    startEmailScheduler();
+  })
   .catch((err) => {
     console.error("MongoDB connection error:", err);
     process.exit(1);
