@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchNews } from "../Api/newsApi";
 
+
 const News = () => {
   const [news, setNews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

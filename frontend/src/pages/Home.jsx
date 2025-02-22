@@ -2,145 +2,142 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Activity, 
-  User, 
-  MapPin, 
-  MessageSquare, 
-  ArrowRight, 
-  HelpCircle, 
-  AlarmClock, 
-  MessageCircle, 
-  Camera,
-  Stethoscope,
-  ShieldCheck,
-  HeartPulse
-} from "lucide-react";
+import { useState, useEffect } from "react";
 
-const Index = () => {
+const Home = () => {
   const navigate = useNavigate();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  // Background images for rotation
+  const backgroundImages = [
+    "https://images.unsplash.com/photo-1527613426441-4da17471b66d",
+    "https://images.unsplash.com/photo-1538108149393-fbbd81895907",
+    "https://images.unsplash.com/photo-1579684385127-1ef15d508118",
+    "https://images.unsplash.com/photo-1516549655169-df83a0774514",
+  ];
+
+  // Rotate images every 7 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex(
+        (prevIndex) => (prevIndex + 1) % backgroundImages.length
+      );
+    }, 7000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Features list with corrected paths
   const features = [
     {
-      icon: HeartPulse,
-      title: "Symptom Analysis",
-      description: "AI-powered symptom assessment with 95% clinical accuracy",
+      title: "Disease Predictor",
+      description: "Check diagnosis by entering your symptoms.",
+      icon: "🔬",
       path: "/symptoms",
     },
     {
-      icon: Stethoscope,
-      title: "Specialist Matching",
-      description: "Connect with verified medical professionals",
+      title: "Patient Care",
+      description:
+        "Personalized treatment plans focused on individual patient needs.",
+      icon: "👥",
       path: "/specialists",
     },
     {
-      icon: MapPin,
-      title: "Connect to Hospitals",
-      description: "AI-curated healthcare providers near you",
+      title: "Find hospitals",
+      description: "Search nearby hospitals and clinics for immediate care.",
+      icon: "🚑",
       path: "/locations",
     },
     {
-      icon: ShieldCheck,
       title: "Feedback",
-      description: "Rate us and help us improve",
+      description: "Provide feedback to help us improve our services.",
+      icon: "💬",
       path: "/feedback",
     },
+    {
+      title: "Reminder",
+      description:
+        "Set reminders for your medication ",
+      icon: "⏰",
+      path: "/remindme",
+    },
     // {
-    //   icon: HelpCircle,
-    //   title: "Feedback",
-    //   description: "Rate us and help us improve",
-    //   path:"/WhatIf"
+    //   title: "Modern Facilities",
+    //   description:
+    //     "Contemporary medical facilities equipped with the latest technology.",
+    //   icon: "🏥",
+    //   path: "/news",
     // },
     {
-      icon: AlarmClock,
-      title: "Alert",
-      description: "We will remind you for your health",
-      path:"/RemindMe"
+      title: "Get News",
+      description:
+        "Get realtime health releted news",
+      icon: "📢",
+      path: "/news",
     },
-    {
-      icon: Camera,
-      title:"Scan",
-      description:"Know your skin",
-      path:"/ImageUpload"
-    },{
-      icon: Camera,
-      title:"News",
-      description:"Know your skin",
-      path:"/news"
-      
-    }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A0F12] to-[#1A1F24] overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 -left-20 w-96 h-96 bg-gradient-to-r from-primary/20 to-transparent rounded-full blur-3xl" />
-        <div className="absolute bottom-0 -right-20 w-96 h-96 bg-gradient-to-l from-cyan-500/15 to-transparent rounded-full blur-3xl" />
-      </div>
-      
-      <Header />
+    <div className="min-h-screen overflow-hidden relative">
+      {/* Background Image Carousel */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentImageIndex}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+          className="absolute inset-0 z-0"
+        >
+          <img
+            src={backgroundImages[currentImageIndex]}
+            alt="Medical facility"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70 backdrop-blur-[2px]" />
+        </motion.div>
+      </AnimatePresence>
 
-      <main className="relative pt-32 pb-24">
+      {/* Glassmorphism Effects */}
+      <div className="absolute inset-0 z-10">
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-blue-200/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-emerald-200/10 rounded-full blur-3xl animate-pulse" />
+      </div>
+
+      <Header className="relative z-20" />
+
+      <main className="relative pt-32 pb-24 z-20">
         {/* Hero Section */}
         <section className="container mx-auto px-4 lg:px-8">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
             className="space-y-8 max-w-5xl mx-auto text-center"
           >
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="inline-flex items-center px-4 py-2 bg-primary/15 rounded-2xl backdrop-blur-sm border border-primary/20"
-            >
-              <div className="w-2 h-2 bg-primary rounded-full mr-2 animate-pulse" />
-              <span className="text-sm font-medium bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
-              Your Personal Health Assistant
-              </span>
+            <motion.span className="inline-block px-4 py-1.5 rounded-full text-sm font-medium bg-white/10 text-white backdrop-blur-lg border border-white/20">
+              Transforming Healthcare
             </motion.span>
-
-            <motion.h1
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-5xl md:text-6xl font-bold text-white leading-tight"
-            >
-              Smart Health Diagnosis <span className="bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">Medical</span>
-              <br />
-              Intelligence System
+            <motion.h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight">
+              Modern Healthcare Solutions for a Better Tomorrow
             </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed"
-            >
-              Advanced neural networks combined with medical expertise to deliver precise health insights and personalized care solutions.
+            <motion.p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
+              Experience healthcare reimagined with cutting-edge technology and
+              compassionate care.
             </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="flex flex-col sm:flex-row justify-center gap-4 mt-12"
-            >
+            <motion.div className="flex flex-wrap gap-4 justify-center">
               <Button
-                size="xl"
+                size="lg"
+                className="bg-white text-gray-900 hover:bg-gray-100 transition-all duration-300"
                 onClick={() => navigate("/symptoms")}
-                className="group relative overflow-hidden bg-gradient-to-r from-primary to-cyan-500 hover:from-primary/90 hover:to-cyan-500/90 px-10 py-7 rounded-2xl shadow-2xl shadow-primary/20 hover:shadow-primary/30"
               >
-                <span className="text-lg font-semibold">Check Symptoms</span>
-                <ArrowRight className="ml-3 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
-                <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                Disease Predictor
               </Button>
-
               <Button
-                size="xl"
-                variant="ghost"
-                className="border border-white/20 bg-white/5 hover:bg-white/10 px-10 py-7 rounded-2xl backdrop-blur-lg text-white hover:text-white/90"
+                size="lg"
+                variant="outline"
+                className="border-white/20 text-white hover:bg-white/10 transition-all duration-300"
               >
-                <button  onClick={() => navigate("/register")} >Explore more</button>
+                Explore More
               </Button>
             </motion.div>
           </motion.div>
@@ -152,80 +149,33 @@ const Index = () => {
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ delay: index * 0.1 }}
                 onClick={() => navigate(feature.path)}
-                className="group relative p-6 rounded-2xl bg-gradient-to-b from-white/5 to-white/2 border border-white/10 hover:border-white/20 cursor-pointer transition-all hover:-translate-y-2 shadow-xl hover:shadow-2xl backdrop-blur-lg"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="group relative p-8 rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 hover:border-white/20 cursor-pointer transition-all duration-500 hover:-translate-y-1"
               >
-                <div className="relative">
-                  <div className="p-3 w-max rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 mb-6">
-                    <feature.icon className="w-7 h-7 text-primary" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-white mb-4">{feature.title}</h3>
-                  <p className="text-white/70 leading-relaxed">{feature.description}</p>
-                  <div className="mt-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mb-4" />
-                    <div className="flex items-center text-primary font-medium">
-                      <span>Learn More</span>
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </div>
-                  </div>
+                <div className="relative z-10">
+                  <span className="text-3xl mb-4 block">{feature.icon}</span>
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-300">{feature.description}</p>
                 </div>
               </motion.div>
             ))}
           </div>
         </section>
-
-        {/* Floating Particles */}
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(30)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-white/10 rounded-full animate-float"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`
-              }}
-            />
-          ))}
-        </div>
       </main>
 
-      {/* Chat Assistant FAB */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1 }}
-        className="fixed bottom-8 right-8"
-      >
-        <Button
-          size="lg"
-          className="rounded-full px-6 py-5 bg-gradient-to-r from-primary to-cyan-500 hover:from-primary/90 hover:to-cyan-500/90 shadow-2xl shadow-primary/30 backdrop-blur-lg"
-          onClick={() => navigate("/chat")}
-        >
-          <MessageCircle className="w-5 h-5 mr-2" />
-          HealthNodes Assistant
-        </Button>
-      </motion.div>
-
       {/* Footer */}
-      <footer className="border-t border-white/10 mt-24 py-8">
-        <div className="container mx-auto px-4 lg:px-8 text-center text-sm text-white/60">
-          <div className="flex flex-wrap justify-center gap-4 mb-4">
-            <a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a>
-            <span>•</span>
-            <a href="/terms" className="hover:text-white transition-colors">Terms of Service</a>
-            <span>•</span>
-            <a href="https://github/vishaldjagdale" className="hover:text-white transition-colors">Contact Us</a>
-          </div>
-          <p>© {new Date().getFullYear()} HealthNodes. All rights reserved.</p>
+      <footer className="relative z-20 border-t border-white/10 mt-24 py-8">
+        <div className="container mx-auto px-4 text-center text-gray-400">
+          <p>© 2025 Healthcare Platform. All rights reserved.</p>
         </div>
       </footer>
     </div>
   );
 };
 
-export default Index;
+export default Home;

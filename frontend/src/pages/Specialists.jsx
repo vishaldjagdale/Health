@@ -15,24 +15,6 @@ const specialists = [
     consultationFee: "₹1500",
     isNew: true
   },
-  {
-    name: "Dr. Kisruu",
-    specialty: "Mulvyad Specialist",
-    location: "Latur, Maharashtra",
-    rating: 4.9,
-    experience: "8 years",
-    availability: "Tomorrow 10 AM - 2 PM",
-    consultationFee: "₹1200"
-  },
-  {
-    name: "Dr. Russel",
-    specialty: "Dang Specialist",
-    location: "Dang, Maharashtra",
-    rating: 4.7,
-    experience: "15 years",
-    availability: "Available next week",
-    consultationFee: "₹2000"
-  },
 ];
 
 for (let i = 4; i <= 50; i++) {

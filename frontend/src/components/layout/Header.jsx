@@ -77,7 +77,7 @@ export const Header = () => {
           ) : (
             <div className="flex items-center space-x-4">
               <span className="text-white">
-                Welcome, {user?.user.username || "User"}!
+                Welcome, {  "User"}!
               </span>
               <Button
                 onClick={logoutHandler}

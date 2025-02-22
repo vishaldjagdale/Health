@@ -1,0 +1,2 @@
+express,mongoose,luclid-react,shadcn ui,farmer-motion,cors,dotenv,npm install react-router-dom redux react-redux @tanstack/react-query redux-persist react-hot-toast,
+npm install @tailwindcss/line-clamp

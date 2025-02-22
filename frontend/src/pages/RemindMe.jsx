@@ -1,80 +1,86 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AlarmClock, Bell, CheckCircle2, Trash2, Circle, Flame } from "lucide-react";
+import { AlarmClock, Bell, Trash2, Flame } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const generateDays = () => {
-  const today = new Date();
-  return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date();
-    date.setDate(today.getDate() - i);
-    return { 
-      date: date.toDateString(),
-      taken: false,
-      day: date.toLocaleDateString('en-US', { weekday: 'short' })
-    };
-  }).reverse();
-};
+const API_BASE_URL = "http://localhost:3000/api/v1/reminders"; 
+const USER_ID = "123456"; // Replace this dynamically with the logged-in user's ID
 
 const RemindMe = () => {
   const [medicineName, setMedicineName] = useState("");
   const [time, setTime] = useState("");
   const [reminders, setReminders] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [streak, setStreak] = useState(() => JSON.parse(localStorage.getItem("streak")) || generateDays());
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("streak", JSON.stringify(streak));
-  }, [streak]);
-
-  const formatTime = (date) => {
-    return date.toLocaleTimeString([], { 
-      hour: "2-digit", 
-      minute: "2-digit", 
-      hour12: true 
-    });
+  // Fetch reminders from backend
+  const fetchReminders = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/user/${USER_ID}`);
+      setReminders(response.data.data || []);
+    } catch (error) {
+      console.error("Error fetching reminders:", error);
+    }
   };
 
-  const addReminder = () => {
+  useEffect(() => {
+    fetchReminders();
+  }, []);
+
+  const addReminder = async () => {
+    console.log("addReminder function called"); // Debugging log
     if (!medicineName || !time) {
       alert("Please enter medicine name and time.");
       return;
     }
 
-    const newReminder = { 
-      id: Date.now(), 
-      medicine: medicineName, 
-      time, 
-      taken: false 
-    };
-    
-    setReminders([...reminders, newReminder]);
-    setMedicineName("");
-    setTime("");
+    const [hour, minute] = time.split(":").map(Number);
+
+    try {
+      console.log("Sending request to add reminder:", {
+        userId: USER_ID,
+        title: medicineName,
+        hour,
+        minute,
+      });
+
+      const response = await axios.post(`${API_BASE_URL}/add`, {
+        userId: USER_ID,
+        title: medicineName,
+        hour,
+        minute,
+      });
+
+      console.log("Add Reminder Response:", response.data);
+      fetchReminders(); // Refresh the reminders list
+      setMedicineName("");
+      setTime("");
+    } catch (error) {
+      console.error("Error adding reminder:", error);
+      alert("Failed to add reminder. Please try again.");
+    }
   };
 
-  const removeReminder = (id) => {
-    setReminders(reminders.filter(reminder => reminder.id !== id));
+  const removeReminder = async (id) => {
+    try {
+      await axios.delete(`${API_BASE_URL}/delete`, {
+        data: { reminderId: id },
+      });
+
+      console.log("Deleted reminder:", id);
+      fetchReminders(); // Refresh the reminders list
+    } catch (error) {
+      console.error("Error deleting reminder:", error);
+      alert("Failed to delete reminder. Please try again.");
+    }
   };
-
-  const toggleTaken = (id) => {
-    setReminders(prev => prev.map(reminder =>
-      reminder.id === id ? { ...reminder, taken: !reminder.taken } : reminder
-    ));
-
-    setStreak(prev => prev.map(day => 
-      day.date === new Date().toDateString() ? { ...day, taken: true } : day
-    ));
-  };
-
-  const streakCount = streak.filter(day => day.taken).length;
 
   return (
     <div className="min-h-screen bg-[#1C2529]">
@@ -82,13 +88,7 @@ const RemindMe = () => {
       
       <main className="container mx-auto px-4 pt-16">
         <div className="max-w-2xl mx-auto space-y-8">
-
-          {/* Header Section */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
             <div className="relative inline-block mb-4">
               <Flame className="absolute -right-4 -top-4 w-8 h-8 text-orange-400 animate-pulse" />
               <Bell className="w-14 h-14 text-primary" />
@@ -104,24 +104,13 @@ const RemindMe = () => {
             <div className="flex items-center gap-3">
               <AlarmClock className="w-8 h-8 text-primary" />
               <span className="text-3xl font-mono text-white">
-                {formatTime(currentTime)}
+                {currentTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
               </span>
-            </div>
-            <div className="text-sm text-white/60">
-              {currentTime.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
             </div>
           </div>
 
           {/* Add Reminder Form */}
-          <motion.div 
-            className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10"
-            initial={{ scale: 0.95 }}
-            animate={{ scale: 1 }}
-          >
+          <motion.div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10" initial={{ scale: 0.95 }} animate={{ scale: 1 }}>
             <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4">
               <Input
                 placeholder="Medicine name"
@@ -153,43 +142,24 @@ const RemindMe = () => {
             <AnimatePresence>
               {reminders.length > 0 ? (
                 <ul className="space-y-4">
-                  {reminders.map(reminder => (
+                  {reminders.map((reminder) => (
                     <motion.li
-                      key={reminder.id}
+                      key={reminder._id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, height: 0 }}
                       className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center gap-4"
                     >
                       <div className="flex-1">
-                        <p className={`text-lg font-medium ${reminder.taken ? 'text-white/50 line-through' : 'text-white'}`}>
-                          {reminder.medicine}
-                        </p>
+                        <p className="text-lg font-medium text-white">{reminder.title}</p>
                         <p className="text-sm text-white/60">
-                          {reminder.time}
+                          {reminder.hour.toString().padStart(2, "0")}:{reminder.minute.toString().padStart(2, "0")}
                         </p>
                       </div>
                       
-                      <div className="flex gap-2">
-                        <Button
-                          size="icon"
-                          variant={reminder.taken ? "default" : "secondary"}
-                          onClick={() => toggleTaken(reminder.id)}
-                        >
-                          {reminder.taken ? (
-                            <CheckCircle2 className="w-5 h-5" />
-                          ) : (
-                            <Circle className="w-5 h-5" />
-                          )}
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="destructive"
-                          onClick={() => removeReminder(reminder.id)}
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </Button>
-                      </div>
+                      <Button size="icon" variant="destructive" onClick={() => removeReminder(reminder._id)}>
+                        <Trash2 className="w-5 h-5" />
+                      </Button>
                     </motion.li>
                   ))}
                 </ul>
@@ -200,39 +170,6 @@ const RemindMe = () => {
               )}
             </AnimatePresence>
           </div>
-
-          {/* Streak Tracker */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-white">Consistency Streak</h2>
-              <span className="text-primary">{streakCount}/7 days</span>
-            </div>
-            
-            <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-              <div className="grid grid-cols-7 gap-2">
-                {streak.map((day, index) => (
-                  <div key={index} className="flex flex-col items-center gap-2">
-                    <div 
-                      className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                        day.taken ? 'bg-green-500' : 'bg-white/10'
-                      }`}
-                    >
-                      <span className="text-xs text-white/80">{day.day}</span>
-                    </div>
-                    <div className={`w-2 h-2 rounded-full ${day.taken ? 'bg-green-500' : 'bg-white/10'}`} />
-                  </div>
-                ))}
-              </div>
-              
-              <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-primary to-cyan-500 transition-all duration-500"
-                  style={{ width: `${(streakCount / 7) * 100}%` }}
-                />
-              </div>
-            </div>
-          </div>
-
         </div>
       </main>
     </div>
