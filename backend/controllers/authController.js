@@ -11,10 +11,14 @@ dotenv.config();
 const register = async (req, res) => {
   try {
     const { username, email, password, avatar } = req.body;
+    // console.log(req.body);
 
     // 🔹 Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("Plain Password:", password);
+    console.log("Hashed Password:", hashedPassword);
     const user = new User({ username, email, password: hashedPassword, avatar });
+    console.log(user);
 
     await user.save();
 
@@ -47,14 +51,22 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("Received request:", req.body);
+
     const user = await User.findOne({ email });
+    console.log("User found in DB:", user);
 
     if (!user) {
       return res.status(401).json({ error: "User not found" });
     }
 
+    console.log("Stored hashed password:", user.password);
+    console.log("Password to compare:", password);
+
     // 🔹 Ensure password comparison works
     const isValid = await bcrypt.compare(password, user.password);
+    console.log("Password comparison result:", isValid);
+
     if (!isValid) {
       return res.status(401).json({ error: "Invalid password" });
     }
@@ -68,7 +80,6 @@ const login = async (req, res) => {
       secure: process.env.NODE_ENV !== "development",
     });
 
-    // ✅ Return user details along with token
     res.json({
       message: "Login successful",
       token,
@@ -83,6 +94,7 @@ const login = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 // 🔹 FORGOT PASSWORD
 const forgotPassword = async (req, res) => {

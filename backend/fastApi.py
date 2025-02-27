@@ -11,13 +11,22 @@ from PIL import Image
 import io
 from pydantic import BaseModel
 from typing import List
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Access environment variables
+
+
 
 app = FastAPI(title="Disease Prediction & Chat API")
 
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # ✅ Replace "*" with your frontend URL
+    allow_origins=["*"],  # ✅ Replace "*" with your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -93,7 +102,7 @@ async def increment_challenge(data: dict):
 # -------------------- Gemini Chat API --------------------
 
 # Gemini API Configuration
-GEMINI_API_KEY = "AIzaSyCaEtGh2eP9ykuxNXdki-IWcf2cDd1Duo8"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
 
 class ChatRequest(BaseModel):
@@ -176,9 +185,16 @@ def predict_disease_symptoms(user_input: str):
     # Compute cosine similarity for main disease
     input_vector = vectorizer_main.transform([cleaned_input])
     similarity_scores = cosine_similarity(input_vector, main_disease_vectors)
+    
+    max_similarity = np.max(similarity_scores)
+    if max_similarity < 0.2:
+        return { "Symptoms are different from these 3 main diseases domains"}
+  
+    
+    
     main_disease_index = np.argmax(similarity_scores)
     main_disease = disease_names[main_disease_index]  # Fetch disease name
-
+    
     # Load corresponding sub-disease model and vectorizer
     try:
         with open(f"./models/vectorizers/{main_disease}_vectorizer.pkl", "rb") as f:

@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Dr. John Smith",
+    "specialization": "Cardiologist",
+    "experience": 12,
+    "availableSlots": ["10:00 AM", "2:00 PM", "4:00 PM"],
+    "contact": "1234567890",
+    "location": "New York, USA"
+  },
+  {
+    "name": "Dr. Jane Doe",
+    "specialization": "Dermatologist",
+    "experience": 8,
+    "availableSlots": ["9:00 AM", "1:00 PM", "3:00 PM"],
+    "contact": "9876543210",
+    "location": "Los Angeles, USA"
+  },
+  {
+    "name": "Dr. Mark Lee",
+    "specialization": "Neurologist",
+    "experience": 15,
+    "availableSlots": ["11:00 AM", "2:30 PM", "5:00 PM"],
+    "contact": "5678901234",
+    "location": "Chicago, USA"
+  },
+  {
+    "name": "Dr. Emily Brown",
+    "specialization": "Orthopedic",
+    "experience": 10,
+    "availableSlots": ["8:30 AM", "12:30 PM", "4:30 PM"],
+    "contact": "6543210987",
+    "location": "Houston, USA"
+  }
+]

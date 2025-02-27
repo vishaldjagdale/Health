@@ -3,6 +3,8 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
 import authSlice from "./authSlice";  // Ensure correct path
+import habitSlice from "./habitSlice";
+
 
 const persistConfig = {
   key: "root",
@@ -11,6 +13,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authSlice,  // Ensure correct slice
+  habits: habitSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

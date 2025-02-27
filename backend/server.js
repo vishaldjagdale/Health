@@ -7,6 +7,16 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 import authRoutes from "./routes/auth.routes.js";
+import doctorRoutes from "./routes/doctor.routes.js";
+import appointmentRoutes from "./routes/appointment.routes.js";
+import reportRoutes from "./routes/analyzeReports.routes.js";
+import habitRoutes from "./routes/habitRoutes.js";
+import reminderRoutes from "./routes/reminderRoutes.js";
+
+import { checkReminders } from "./services/smsService.js";
+import newsRoute from "./routes/newsRoutes.js";
+
+
 
 // Validate required environment variables
 
@@ -25,6 +35,17 @@ app.use(
 );
 
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/doctor", doctorRoutes);
+app.use("/api/appointments", appointmentRoutes);
+app.use("/uploads", express.static("uploads"));
+app.use("/api/reports", reportRoutes);
+app.use("/api/habits", habitRoutes);
+app.use("/api/reminders", reminderRoutes);
+app.use("/api", newsRoute);
+
+// Run SMS Scheduler Every Minute
+setInterval(checkReminders, 60000);
+
 
 if (!process.env.MONGODB_URI) {
   console.error("MONGODB_URI is not defined in environment variables");

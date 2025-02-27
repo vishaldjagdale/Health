@@ -21,14 +21,31 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setLoading(true));
-
-    // Simulating an API call
-    setTimeout(() => {
-      dispatch(setUser({ username, email }));
+  
+    try {
+      const response = await fetch("http://localhost:3000/api/v1/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        dispatch(setUser({ username, email }));
+        navigate("/");
+      } else {
+        console.error("Registration failed:", data.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
       dispatch(setLoading(false));
-      navigate("/");
-    }, 1000);
+    }
   };
+  
 
   return (
     <div className="min-h-screen bg-[#1C2529]">

@@ -105,7 +105,7 @@ const HealthTracker = () => {
 
   return (
     <div className="max-w-2xl mx-auto mt-10">
-      <h2 className="text-2xl font-semibold text-center mb-6">🏋️‍♂️ Health & Habit Tracker</h2>
+      <h2 className="text-2xl font-semibold text-center mb-6">🏋‍♂ Health & Habit Tracker</h2>
 
       <Label>User ID</Label>
       <Input

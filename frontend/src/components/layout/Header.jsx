@@ -3,16 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { logoutUser } from "@/store/authSlice"; // Ensure this Redux action clears the user state
+import LanguageSwitcher from "../LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 export const Header = () => {
   const { user } = useSelector((store) => store.auth); 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log("User from Redux:", user);
+  const { t } = useTranslation(); // Initialize translation function
 
   const logoutHandler = () => {
     dispatch(logoutUser()); // Clears user session from Redux
-    toast.success("Logged out successfully!");
+    toast.success(t("logout_success"));
     navigate("/"); // Redirect to home page after logout
   };
 
@@ -27,7 +29,7 @@ export const Header = () => {
               src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAPBJREFUSEvtVtsNwjAMvE4CbAKb0MlgE9gEmARkVJAbHHSOg5JKROpPZPv8uF48oNEZGuHCA7wGsC9I9AxAvtlhgQ+FoC+wI4BRI7PA94JKtcsVwMYLvAVwmpx2Vtu+JJX1ZSruClgTTeYnrbTuqldsBWTvnpMpbTULUr1iluTLAdZEWSnxECLdpnJTRQqTy6NSWpHYuWfJ5VEprUghYFYswnbp7xQOmNCdZrVlyJKGtTNnzM4pYtc/sKVSYS50Ta5/xdKBn86YffpYu9m+lpJLRODCRnLayZYp2p59JGRplwRqno+lnll9aibwjtUM+AHyJ5AfJMP1bgAAAABJRU5ErkJggg=="
               alt="HealthNodes Logo"
             />
-            <span className="text-xl font-semibold text-white">HealthNodes</span>
+            <span className="text-xl font-semibold text-white">{t("healthnodes")}</span>
           </div>
 
           {/* Navigation Links */}
@@ -37,23 +39,26 @@ export const Header = () => {
               onClick={() => navigate("/")}
               className="text-white/80 hover:text-white hover:bg-white/10"
             >
-              Home
+              {t("home")}
             </Button>
             <Button
               variant="ghost"
               onClick={() => navigate("/symptoms")}
               className="text-white/80 hover:text-white hover:bg-white/10"
             >
-              Check Symptoms
+              {t("check_symptoms")}
             </Button>
+      
             <Button
               variant="ghost"
               onClick={() => navigate("/history")}
               className="text-white/80 hover:text-white hover:bg-white/10"
             >
-              History
+              {t("history")}
             </Button>
           </nav>
+
+          <LanguageSwitcher />
 
           {/* Authentication Buttons */}
           {!user ? (
@@ -63,25 +68,25 @@ export const Header = () => {
                 onClick={() => navigate("/login")}
                 className="bg-primary hover:bg-primary/90 text-white"
               >
-                Sign In
+                {t("sign_in")}
               </Button>
               <Button
                 onClick={() => navigate("/register")}
                 className="bg-primary hover:bg-primary/90 text-white"
               >
-                Sign Up
+                {t("sign_up")}
               </Button>
             </div>
           ) : (
             <div className="flex items-center space-x-4">
               <span className="text-white">
-                Welcome, {user?.user.username || "User"}!
+                {t("welcome")}, {user?.username || t("user")} 
               </span>
               <Button
                 onClick={logoutHandler}
                 className="bg-primary hover:bg-primary/90 text-white"
               >
-                Logout
+                {t("logout")}
               </Button>
             </div>
           )}

@@ -11,7 +11,7 @@ const Locations = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    requestUserLocation();
+    // requestUserLocation();
   }, []);
 
   const requestUserLocation = () => {
