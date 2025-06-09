@@ -5,7 +5,7 @@ import re
 import pickle
 import numpy as np
 import pandas as pd
-import tensorflow as tf
+# import tensorflow as tf
 from sklearn.metrics.pairwise import cosine_similarity
 from PIL import Image
 import io
@@ -103,7 +103,7 @@ async def increment_challenge(data: dict):
 
 # Gemini API Configuration
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
+GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
 
 class ChatRequest(BaseModel):
     message: str
@@ -111,47 +111,58 @@ class ChatRequest(BaseModel):
 @app.post("/chat")
 def chat(request: ChatRequest):
     headers = {"Content-Type": "application/json"}
-    payload = {"contents": [{"parts": [{"text": request.message}]}]}
+    payload = {  "contents": [
+            {
+                "parts": [
+                    {"text": request.message}
+                ]
+            }
+        ]}
 
-    response = requests.post(GEMINI_API_URL, json=payload, headers=headers)
+    try:
+        response = requests.post(GEMINI_API_URL, json=payload, headers=headers)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        return {"error": f"Request error: {e}"}
 
-    if response.status_code == 200:
-        try:
-            reply = response.json()["candidates"][0]["content"]["parts"][0]["text"]
-            return {"reply": reply}
-        except KeyError:
-            return {"error": "Invalid response format from Gemini API"}
-    else:
-        return {"error": f"Gemini API Error: {response.status_code}, {response.text}"}
+    try:
+        json_data = response.json()
+        reply = json_data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+        if not reply:
+            return {"error": "No response from Gemini API"}
+        return {"reply": reply}
+    except (KeyError, IndexError) as e:
+        return {"error": f"Unexpected response structure: {e}"}
 
 # -------------------- Skin Disease Prediction --------------------
 
 # Load trained .h5 model
-model = tf.keras.models.load_model("./models/skin_disease_model.h5")
 
-# Define class labels based on model training
-CLASS_NAMES = [
-    "Actinic keratosis", "Atopic Dermatitis", "Benign keratosis",
-    "Dermatofibroma", "Melanocytic nevus", "Melanoma",
-    "Squamous cell carcinoma", "Tinea Ringworm Candidiasis", "Vascular lesion"
-]
+# model = tf.keras.models.load_model("./models/skin_disease_model.h5")
 
-def preprocess_image(image):
-    img = Image.open(io.BytesIO(image)).convert("RGB")
-    img = img.resize((224, 224))  # Resize to match model input size
-    img_array = np.array(img) / 255.0  # Normalize
-    img_array = np.expand_dims(img_array, axis=0)  # Expand dimensions
-    return img_array
+# # Define class labels based on model training
+# CLASS_NAMES = [
+#     "Actinic keratosis", "Atopic Dermatitis", "Benign keratosis",
+#     "Dermatofibroma", "Melanocytic nevus", "Melanoma",
+#     "Squamous cell carcinoma", "Tinea Ringworm Candidiasis", "Vascular lesion"
+# ]
 
-@app.post("/predict_image")
-async def predict_disease(file: UploadFile = File(...)):
-    image_data = await file.read()
-    processed_image = preprocess_image(image_data)
+# def preprocess_image(image):
+#     img = Image.open(io.BytesIO(image)).convert("RGB")
+#     img = img.resize((224, 224))  # Resize to match model input size
+#     img_array = np.array(img) / 255.0  # Normalize
+#     img_array = np.expand_dims(img_array, axis=0)  # Expand dimensions
+#     return img_array
 
-    prediction = model.predict(processed_image)
-    predicted_class = CLASS_NAMES[np.argmax(prediction)]  # Get highest probability class
+# @app.post("/predict_image")
+# async def predict_disease(file: UploadFile = File(...)):
+#     image_data = await file.read()
+#     processed_image = preprocess_image(image_data)
+
+#     prediction = model.predict(processed_image)
+#     predicted_class = CLASS_NAMES[np.argmax(prediction)]  # Get highest probability class
     
-    return {"disease": predicted_class}
+#     return {"disease": predicted_class}
 
 # -------------------- Symptom-based Disease Prediction --------------------
 
