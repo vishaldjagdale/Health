@@ -1,8 +1,10 @@
+import { backendUrl } from "./urlApi";
+
 export const fetchHabits = async () => {
   try {
-    const response = await fetch("http://localhost:3000/api/habits"); // Replace with actual API
+    const response = await fetch(`${backendUrl}/api/habits`);
     const data = await response.json();
-    
+
     if (!Array.isArray(data)) {
       console.error("Invalid API response, expected array but got", data);
       return [];
@@ -18,7 +20,7 @@ export const fetchHabits = async () => {
 // ✅ Function to add a new habit
 export const addHabit = async (habitName) => {
   try {
-    const response = await fetch("http://localhost:3000/api/habits", {
+    const response = await fetch(`${backendUrl}/api/habits`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: habitName }),

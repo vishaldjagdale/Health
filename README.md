@@ -65,7 +65,7 @@ npm install
 Frontend `.env`:
 
 ```
-VITE_API_URL=http://localhost:3000
+VITE_API_URL=http://localhost:3000 or Replace with Your Backend Url ( In frontend urlApi file)
 ```
 
 Backend `.env`:

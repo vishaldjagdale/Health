@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 
-const API_BASE_URL = "http://localhost:8000"; // Update with your FastAPI backend URL
+import { API_BASE_URL } from "../utils/urlApi"; // Adjust the import path as necessary
 
 const HealthTracker = () => {
   const [userId, setUserId] = useState("");
@@ -70,7 +70,9 @@ const HealthTracker = () => {
   // Fetch User Progress
   const fetchUserProgress = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/user-progress/${userId}`);
+      const response = await axios.get(
+        `${API_BASE_URL}/user-progress/${userId}`
+      );
       setUserProgress(response.data);
     } catch (error) {
       console.error("Error fetching progress:", error);
@@ -105,7 +107,9 @@ const HealthTracker = () => {
 
   return (
     <div className="max-w-2xl mx-auto mt-10">
-      <h2 className="text-2xl font-semibold text-center mb-6">🏋‍♂ Health & Habit Tracker</h2>
+      <h2 className="text-2xl font-semibold text-center mb-6">
+        🏋‍♂ Health & Habit Tracker
+      </h2>
 
       <Label>User ID</Label>
       <Input
@@ -163,7 +167,10 @@ const HealthTracker = () => {
               onChange={(e) => setCompletedDays(e.target.value)}
               className="mb-3"
             />
-            <Button onClick={joinChallenge} className="w-full bg-red-500 hover:bg-red-600">
+            <Button
+              onClick={joinChallenge}
+              className="w-full bg-red-500 hover:bg-red-600"
+            >
               Join Challenge
             </Button>
           </CardContent>
@@ -181,10 +188,20 @@ const HealthTracker = () => {
               {userProgress.habits.map((habit, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <div className="flex-1">
-                    <p className="text-sm font-medium">{habit.habit_name} - {habit.progress}/30 days</p>
-                    <Progress value={(habit.progress / 30) * 100} className="mt-1" />
+                    <p className="text-sm font-medium">
+                      {habit.habit_name} - {habit.progress}/30 days
+                    </p>
+                    <Progress
+                      value={(habit.progress / 30) * 100}
+                      className="mt-1"
+                    />
                   </div>
-                  <Button size="sm" onClick={() => incrementHabit(habit.habit_name)}>+1</Button>
+                  <Button
+                    size="sm"
+                    onClick={() => incrementHabit(habit.habit_name)}
+                  >
+                    +1
+                  </Button>
                 </div>
               ))}
             </div>
@@ -198,15 +215,28 @@ const HealthTracker = () => {
               {userProgress.challenges.map((challenge, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <div className="flex-1">
-                    <p className="text-sm font-medium">{challenge.challenge_name} - {challenge.completed_days}/30 days</p>
-                    <Progress value={(challenge.completed_days / 30) * 100} className="mt-1 bg-orange-500" />
+                    <p className="text-sm font-medium">
+                      {challenge.challenge_name} - {challenge.completed_days}/30
+                      days
+                    </p>
+                    <Progress
+                      value={(challenge.completed_days / 30) * 100}
+                      className="mt-1 bg-orange-500"
+                    />
                   </div>
-                  <Button size="sm" onClick={() => incrementChallenge(challenge.challenge_name)}>+1</Button>
+                  <Button
+                    size="sm"
+                    onClick={() => incrementChallenge(challenge.challenge_name)}
+                  >
+                    +1
+                  </Button>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="mt-3 text-sm text-gray-500">No challenges joined yet.</p>
+            <p className="mt-3 text-sm text-gray-500">
+              No challenges joined yet.
+            </p>
           )}
         </div>
       )}

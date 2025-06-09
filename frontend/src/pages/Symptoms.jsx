@@ -4,7 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import "regenerator-runtime/runtime";
 import { Activity, Mic, MicOff, PlusCircle, XCircle } from "lucide-react";
-import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
+import { API_BASE_URL } from "../utils/urlApi";
 
 const Symptoms = () => {
   const [symptoms, setSymptoms] = useState("");
@@ -53,7 +56,7 @@ const Symptoms = () => {
       const formData = new FormData();
       formData.append("user_input", symptoms);
 
-      const response = await fetch("http://127.0.0.1:8000/predict", {
+      const response = await fetch(`${API_BASE_URL}/predict`, {
         method: "POST",
         body: formData,
       });
@@ -78,8 +81,12 @@ const Symptoms = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <Activity className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-white mb-4">Check Your Symptoms</h1>
-            <p className="text-white/80">Track your symptoms and get preliminary diagnoses</p>
+            <h1 className="text-3xl font-bold text-white mb-4">
+              Check Your Symptoms
+            </h1>
+            <p className="text-white/80">
+              Track your symptoms and get preliminary diagnoses
+            </p>
           </div>
 
           <div className="space-y-6">
@@ -91,13 +98,23 @@ const Symptoms = () => {
                   placeholder="Enter your symptoms or use voice input..."
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
-                <Button className="bg-primary hover:bg-primary/90" onClick={handleCheckSymptoms} disabled={loading}>
+                <Button
+                  className="bg-primary hover:bg-primary/90"
+                  onClick={handleCheckSymptoms}
+                  disabled={loading}
+                >
                   {loading ? "Checking..." : "Check"}
                 </Button>
-                <Button className="bg-secondary hover:bg-secondary/80" onClick={handleVoiceInput}>
+                <Button
+                  className="bg-secondary hover:bg-secondary/80"
+                  onClick={handleVoiceInput}
+                >
                   {listening ? <MicOff className="text-red-500" /> : <Mic />}
                 </Button>
-                <Button className="bg-red-500 hover:bg-red-600" onClick={handleClear}>
+                <Button
+                  className="bg-red-500 hover:bg-red-600"
+                  onClick={handleClear}
+                >
                   <XCircle />
                 </Button>
               </div>
@@ -106,17 +123,32 @@ const Symptoms = () => {
 
               {prediction && (
                 <div className="mt-4 p-4 bg-white/10 rounded-lg">
-                  <h2 className="text-lg font-semibold text-white">Prediction Result:</h2>
-                  <p className="text-white">Main Disease: {prediction.main_disease}</p>
-                  <p className="text-white">Sub Disease: {prediction.sub_disease}</p>
+                  <h2 className="text-lg font-semibold text-white">
+                    Prediction Result:
+                  </h2>
+                  <p className="text-white">
+                    Main Disease: {prediction.main_disease}
+                  </p>
+                  <p className="text-white">
+                    Sub Disease: {prediction.sub_disease}
+                  </p>
                 </div>
               )}
             </div>
 
             <div className="glass-morphism rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-white mb-4">Common Symptoms</h2>
+              <h2 className="text-xl font-semibold text-white mb-4">
+                Common Symptoms
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {["Headache", "Fever", "Cough", "Fatigue", "Nausea", "Chest Pain"].map((symptom) => (
+                {[
+                  "Headache",
+                  "Fever",
+                  "Cough",
+                  "Fatigue",
+                  "Nausea",
+                  "Chest Pain",
+                ].map((symptom) => (
                   <Button
                     key={symptom}
                     variant="outline"

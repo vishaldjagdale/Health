@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { backendUrl } from "../utils/urlApi"; // Adjust the import path as necessary
 
 // ✅ Load user from localStorage if available
 const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -7,7 +8,7 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:3000/api/v1/auth/login", {
+      const response = await fetch(`${backendUrl}/api/v1/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", // ✅ Ensures cookies are included (if used)

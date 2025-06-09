@@ -12,9 +12,8 @@ RUN npm install
 COPY . .
 RUN mkdir -p uploads
 
-# Create the missing test directory and a dummy PDF file
-RUN mkdir -p /app/test/data
-RUN echo "%PDF-1.4" > /app/test/data/05-versions-space.pdf
+# Remove bcrypt (we're using bcryptjs)
+RUN npm uninstall bcrypt
 
 # Stage 2: Distroless 
 FROM gcr.io/distroless/nodejs18-debian11
@@ -25,5 +24,4 @@ COPY --from=builder /app ./
 
 EXPOSE 3000
 
-# Fix: Don't specify ENTRYPOINT, just use CMD with the JavaScript file
 CMD ["server.js"]

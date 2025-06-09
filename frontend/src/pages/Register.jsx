@@ -6,6 +6,7 @@ import { useState } from "react";
 import { UserPlus } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { setUser, setLoading } from "@/store/authSlice";
+import { backendUrl } from "../utils/urlApi"; // Adjust the import path as necessary
 
 const Register = () => {
   const navigate = useNavigate();
@@ -21,18 +22,18 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setLoading(true));
-  
+
     try {
-      const response = await fetch("http://localhost:3000/api/v1/auth/register", {
+      const response = await fetch(`${backendUrl}/api/v1/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, email, password }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         dispatch(setUser({ username, email }));
         navigate("/");
@@ -45,7 +46,6 @@ const Register = () => {
       dispatch(setLoading(false));
     }
   };
-  
 
   return (
     <div className="min-h-screen bg-[#1C2529]">
