@@ -16,8 +16,6 @@ import reminderRoutes from "./routes/reminderRoutes.js";
 import { checkReminders } from "./services/smsService.js";
 import newsRoute from "./routes/newsRoutes.js";
 
-
-
 // Validate required environment variables
 
 const app = express();
@@ -27,7 +25,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:8080"],
+    origin: ["http://localhost:8000"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -45,7 +43,6 @@ app.use("/api", newsRoute);
 
 // Run SMS Scheduler Every Minute
 setInterval(checkReminders, 60000);
-
 
 if (!process.env.MONGODB_URI) {
   console.error("MONGODB_URI is not defined in environment variables");

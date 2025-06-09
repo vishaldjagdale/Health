@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs"; // Change from "bcrypt" to "bcryptjs"
 import nodemailer from "nodemailer";
 import { validationResult } from "express-validator";
 import ENV_VARS from "../utils/ENV_Var.js";
@@ -17,12 +17,19 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     console.log("Plain Password:", password);
     console.log("Hashed Password:", hashedPassword);
-    const user = new User({ username, email, password: hashedPassword, avatar });
+    const user = new User({
+      username,
+      email,
+      password: hashedPassword,
+      avatar,
+    });
     console.log(user);
 
     await user.save();
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -71,7 +78,9 @@ const login = async (req, res) => {
       return res.status(401).json({ error: "Invalid password" });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.cookie("token", token, {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
@@ -95,7 +104,6 @@ const login = async (req, res) => {
   }
 };
 
-
 // 🔹 FORGOT PASSWORD
 const forgotPassword = async (req, res) => {
   try {
@@ -106,7 +114,11 @@ const forgotPassword = async (req, res) => {
 
     let { email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    await User.findOneAndUpdate({ email }, { $set: { password: hashedPassword } }, { new: true });
+    await User.findOneAndUpdate(
+      { email },
+      { $set: { password: hashedPassword } },
+      { new: true }
+    );
 
     return res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
