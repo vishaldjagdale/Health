@@ -12,7 +12,7 @@ const AppointmentList = () => {
     useEffect(() => {
         if (!userEmail) return; // 🔴 Prevent API call if no user is logged in
 
-        axios.get(`http://localhost:3000/api/appointments/appointments-list?userEmail=${userEmail}`)
+        axios.get(`http://localhost:3000/api/appointments/appointments-list?userEmail=userEmail`)
             .then(response => setAppointments(response.data))
             .catch(error => console.error("Error fetching appointments:", error));
     }, [userEmail]);

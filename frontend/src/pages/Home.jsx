@@ -12,6 +12,7 @@ import {
   ArrowRight,
   MessageCircle,
   Newspaper,
+  Calendar,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -58,18 +59,22 @@ const Index = () => {
     },
     {
       icon: MessageCircle,
-      title:t("habbit_tracker"),
+      title: t("habbit_tracker"),
       description: t("habbit_tracker_description"),
       path: "/healthtracker",
     },
-
+    {
+      icon: Calendar,
+      title: t("appointments"),
+      description: t("appointments_description"),
+      path: "/appointments-list",
+    },
     {
       title: "Health News",
-      description:
-        "Contemporary medical facilities equipped with the latest technology.",
+      description: "Stay updated with the latest health news and articles.",
       icon: Newspaper,
-      path: "/news-feed",
-    },
+      path: "/news-feed",
+    },
   ];
 
   return (
@@ -95,22 +100,13 @@ const Index = () => {
           <p className="text-lg text-white/80 mt-4">{t("hero_description")}</p>
 
           <div className="mt-8 flex justify-center gap-4">
-                  <Button 
-          size="xl" 
-          onClick={() => navigate("/symptoms")} 
-          className="bg-gradient-to-r from-primary to-cyan-500 hover:shadow-lg hover:scale-105 transition 
-                    text-2xl px-8 py-4 h-16 w-auto"
-        >
-          {t("check_symptoms")} <ArrowRight className="ml-2 w-6 h-6" />
-        </Button>
-            {/* <Button 
+            <Button 
               size="xl" 
-              variant="ghost" 
-              onClick={() => navigate("/register")} 
-              className="border border-white/20 bg-white/5 hover:bg-white/10"
+              onClick={() => navigate("/symptoms")} 
+              className="bg-gradient-to-r from-primary to-cyan-500 hover:shadow-lg hover:scale-105 transition text-2xl px-8 py-4 h-16 w-auto"
             >
-              {t("explore_more")}
-            </Button> */}
+              {t("check_symptoms")} <ArrowRight className="ml-2 w-6 h-6" />
+            </Button>
           </div>
         </motion.div>
 
@@ -134,21 +130,6 @@ const Index = () => {
           ))}
         </section>
       </main>
-
-      {/* Floating Chat Assistant */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="fixed bottom-8 right-8"
-      >
-        <Button 
-          size="lg" 
-          className="rounded-full px-6 py-5 bg-gradient-to-r from-primary to-cyan-500 hover:shadow-lg hover:scale-105 transition"
-          onClick={() => navigate("/chat")}
-        >
-          <MessageCircle className="w-5 h-5 mr-2" /> {t("chat_ai")}
-        </Button>
-      </motion.div>
     </div>
   );
 };

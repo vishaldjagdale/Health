@@ -61,7 +61,7 @@ const App = () => {
                     <Route path="/healthtracker" element={<HealthTracker />} />
                     <Route path="/doctors" element={<DoctorList onSelectDoctor={setSelectedDoctor} />} />
                     <Route path="/book-appointment" element={<AppointmentForm doctor={selectedDoctor} />} />
-                    <Route path="/appointments-list" element={<AppointmentList />} />
+                    <Route path="/appointments-list" element={<AppointmentList userEmail={store.getState().auth.user?.email} />} />
                     <Route path="/report-analyzer" element={<ReportAnalyzer />} />
                     <Route path="/habit-tracker" element={<HabitTracker />} />
                     <Route path="/remainder" element={<RemainderForm />} />
