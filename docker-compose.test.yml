@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: test-mongodb
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "--quiet"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    networks:
+      - test-network
+
+  backend:
+    image: adityagaikwad888/healthnodes-backend:latest
+    container_name: test-backend
+    ports:
+      - "3000:3000"
+    environment:
+      MONGODB_URI: mongodb://admin:password123@mongodb:27017/medical?authSource=admin
+      JWT_SECRET: test-secret
+    depends_on:
+      - mongodb
+    networks:
+      - test-network
+
+  ai-service:
+    image: adityagaikwad888/healthnodes-ai:latest
+    container_name: test-ai
+    ports:
+      - "5000:5000"
+    networks:
+      - test-network
+
+  frontend:
+    image: adityagaikwad888/healthnodes-frontend:latest
+    container_name: test-frontend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - backend
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge

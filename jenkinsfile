@@ -1,0 +1,122 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
+        AI_IMAGE = "adityagaikwad888/healthnodes-ai"
+        BACKEND_IMAGE = "adityagaikwad888/healthnodes-backend"
+        FRONTEND_IMAGE = "adityagaikwad888/healthnodes-frontend"
+        DOCKER_TAG = "${env.BUILD_NUMBER}"
+        
+        // Environment variables from .env file
+        MONGODB_URI = credentials('MONGO_URL_HEALTHNODES')
+        JWT_SECRET = credentials('JWT_SECRET_HEALTHNODES')
+        GEMINI_API_KEY = credentials('GEMINI_API_KEY_HEALTHNODES')
+        TWILIO_SID = credentials('TWILIO_SID_HEALTHNODES')
+        TWILIO_AUTH_TOKEN = credentials('TWILIO_AUTH_TOKEN_HEALTHNODES')
+    }
+    
+    stages {
+        stage("Check Out") {
+            steps {
+                git branch: 'working-durva', url: 'https://github.com/vishaldjagdale/Health.git'
+            }
+        }
+        
+        stage('Build Docker Images') {
+            parallel {
+                stage('Build AI Service') {
+                    steps {
+                        echo 'Building AI Service Docker image...'
+                        dir('AI Models') {
+                            bat "docker build -t ${AI_IMAGE}:${DOCKER_TAG} ."
+                            bat "docker tag ${AI_IMAGE}:${DOCKER_TAG} ${AI_IMAGE}:latest"
+                        }
+                    }
+                }
+                stage('Build Backend') {
+                    steps {
+                        echo 'Building Backend Docker image...'
+                        dir('backend') {
+                            bat "docker build -t ${BACKEND_IMAGE}:${DOCKER_TAG} ."
+                            bat "docker tag ${BACKEND_IMAGE}:${DOCKER_TAG} ${BACKEND_IMAGE}:latest"
+                        }
+                    }
+                }
+                stage('Build Frontend') {
+                    steps {
+                        echo 'Building Frontend Docker image...'
+                        dir('frontend') {
+                            bat "docker build -t ${FRONTEND_IMAGE}:${DOCKER_TAG} ."
+                            bat "docker tag ${FRONTEND_IMAGE}:${DOCKER_TAG} ${FRONTEND_IMAGE}:latest"
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Test Containers') {
+            steps {
+                echo 'Testing all containers with docker-compose...'
+                script {
+                    bat '''
+                        echo "Starting all services..."
+                        docker-compose -f docker-compose.test.yml up -d
+                        
+                        echo "Waiting for services to start..."
+                        timeout /t 30 /nobreak
+                        
+                        echo "Testing Backend health..."
+                        curl -f http://localhost:3000/health || echo "Backend test done"
+                        
+                        echo "Testing AI Service..."
+                        curl -f http://localhost:5000/ || echo "AI service test done"
+                        
+                        echo "Testing Frontend..."
+                        curl -f http://localhost:8000/ || echo "Frontend test done"
+                        
+                        echo "All tests passed! Stopping containers..."
+                        docker-compose -f docker-compose.test.yml down
+                    '''
+                }
+            }
+        }
+        
+        stage('Push to Docker Hub') {
+            steps {
+                echo 'Pushing Docker images to Docker Hub...'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    bat "docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%"
+                    bat "docker push ${AI_IMAGE}:${DOCKER_TAG}"
+                    bat "docker push ${AI_IMAGE}:latest"
+                    bat "docker push ${BACKEND_IMAGE}:${DOCKER_TAG}"
+                    bat "docker push ${BACKEND_IMAGE}:latest"
+                    bat "docker push ${FRONTEND_IMAGE}:${DOCKER_TAG}"
+                    bat "docker push ${FRONTEND_IMAGE}:latest"
+                }
+            }
+        }
+        
+        stage('Docker Prune') {
+            steps {
+                echo 'Cleaning unused Docker resources...'
+                bat 'docker system prune -f'
+            }
+        }
+    }
+    
+    post {
+        always {
+            bat '''
+                docker-compose -f docker-compose.test.yml down || echo "No containers to stop"
+                docker logout
+            '''
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
