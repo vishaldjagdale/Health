@@ -114,9 +114,63 @@ pipeline {
         }
         success {
             echo 'Pipeline completed successfully!'
+            // Additional success email
+            emailext (
+                subject: "🎉 HealthNodes Pipeline Completed Successfully - Build #${BUILD_NUMBER}",
+                body: """
+                <h2>🎉 Complete Pipeline Success!</h2>
+                
+                <p>Your HealthNodes CI/CD pipeline has completed successfully!</p>
+                
+                <p><strong>Pipeline Summary:</strong></p>
+                <ul>
+                    <li>✅ Code Checkout</li>
+                    <li>✅ Docker Images Built</li>
+                    <li>✅ Container Tests Passed</li>
+                    <li>✅ Images Pushed to Docker Hub</li>
+                    <li>✅ Cleanup Completed</li>
+                </ul>
+                
+                <p><strong>Build #${BUILD_NUMBER}</strong> completed in <strong>${currentBuild.durationString}</strong></p>
+                
+                <p>🚀 Ready for AWS deployment!</p>
+                
+                <p><a href="${BUILD_URL}">View Full Build Report</a></p>
+                """,
+                to: "adityakg99@gmail.com",
+                mimeType: 'text/html'
+            )
         }
         failure {
             echo 'Pipeline failed!'
+            // Failure notification email
+            emailext (
+                subject: "❌ HealthNodes Pipeline Failed - Build #${BUILD_NUMBER}",
+                body: """
+                <h2>❌ Pipeline Failure Alert</h2>
+                
+                <p>Your HealthNodes CI/CD pipeline has failed.</p>
+                
+                <p><strong>Build Details:</strong></p>
+                <ul>
+                    <li><strong>Build Number:</strong> #${BUILD_NUMBER}</li>
+                    <li><strong>Branch:</strong> working-durva</li>
+                    <li><strong>Status:</strong> ❌ FAILED</li>
+                    <li><strong>Duration:</strong> ${currentBuild.durationString}</li>
+                </ul>
+                
+                <p><strong>🔍 Next Steps:</strong></p>
+                <ul>
+                    <li>Check the <a href="${BUILD_URL}console">console output</a> for error details</li>
+                    <li>Review the failed stage logs</li>
+                    <li>Fix the issue and trigger a new build</li>
+                </ul>
+                
+                <p><a href="${BUILD_URL}">View Build Details</a></p>
+                """,
+                to: "adityakg99@gmail.com",
+                mimeType: 'text/html'
+            )
         }
     }
 }
