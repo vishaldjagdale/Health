@@ -1,0 +1,69 @@
+pipeline {
+    agent any 
+    environment {
+        EMAIL_RECIPIENT = "adityakg99@gmail.com"
+    }
+    stages {
+        stage  ("Email checkout") {
+            steps {
+                echo 'Pipeline completed successfully!'
+            }
+
+        }
+    }
+
+    post {
+        always {
+            bat '''
+                docker-compose -f docker-compose.test.yml down || echo "No containers to stop"
+                docker logout
+            '''
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+            script {
+                emailext (
+                    subject: "✅ HealthNodes Pipeline Success - Build #${BUILD_NUMBER}",
+                    body: '''
+                    <h2>🎉 HealthNodes CI/CD Pipeline Success!</h2>
+                    
+                    <p><strong>Build Details:</strong></p>
+                    <ul>
+                        <li><strong>Build Number:</strong> #''' + BUILD_NUMBER + '''</li>
+                        <li><strong>Status:</strong> ✅ SUCCESS</li>
+                        <li><strong>Duration:</strong> ''' + currentBuild.durationString + '''</li>
+                    </ul>
+                    
+                    <p><strong>📦 Docker Images Pushed Successfully!</strong></p>
+                    <p>🚀 Ready for AWS deployment!</p>
+                    
+                    <p><a href="''' + BUILD_URL + '''">View Build Details</a></p>
+                    ''',
+                    to: "${EMAIL_RECIPIENT}",
+                    mimeType: 'text/html'
+                )
+            }
+        }
+        failure {
+            echo 'Pipeline failed!'
+            script {
+                emailext (
+                    subject: "❌ HealthNodes Pipeline Failed - Build #${BUILD_NUMBER}",
+                    body: '''
+                    <h2>❌ Pipeline Failure Alert</h2>
+                    
+                    <p>Your HealthNodes CI/CD pipeline has failed.</p>
+                    
+                    <p><strong>Build Number:</strong> #''' + BUILD_NUMBER + '''</p>
+                    <p><strong>Status:</strong> ❌ FAILED</p>
+                    
+                    <p><a href="''' + BUILD_URL + '''console">View Console Output</a></p>
+                    ''',
+                    to: "${EMAIL_RECIPIENT}",
+                    mimeType: 'text/html'
+                )
+            }
+        }
+    }
+}

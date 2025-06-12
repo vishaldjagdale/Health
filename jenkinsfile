@@ -13,12 +13,14 @@ pipeline {
         GEMINI_API_KEY = credentials('GEMINI_API_KEY_HEALTHNODES')
         TWILIO_SID = credentials('TWILIO_SID_HEALTHNODES')
         TWILIO_AUTH_TOKEN = credentials('TWILIO_AUTH_TOKEN_HEALTHNODES')
+        
+        EMAIL_RECIPIENT = "adityakg99@gmail.com"
     }
     
     stages {
         stage("Check Out") {
             steps {
-                git branch: 'working-durva', url: 'https://github.com/vishaldjagdale/Health.git'
+                git branch: 'release', url: 'https://github.com/vishaldjagdale/Health.git'
             }
         }
         
@@ -114,63 +116,48 @@ pipeline {
         }
         success {
             echo 'Pipeline completed successfully!'
-            // Additional success email
-            emailext (
-                subject: "🎉 HealthNodes Pipeline Completed Successfully - Build #${BUILD_NUMBER}",
-                body: """
-                <h2>🎉 Complete Pipeline Success!</h2>
-                
-                <p>Your HealthNodes CI/CD pipeline has completed successfully!</p>
-                
-                <p><strong>Pipeline Summary:</strong></p>
-                <ul>
-                    <li>✅ Code Checkout</li>
-                    <li>✅ Docker Images Built</li>
-                    <li>✅ Container Tests Passed</li>
-                    <li>✅ Images Pushed to Docker Hub</li>
-                    <li>✅ Cleanup Completed</li>
-                </ul>
-                
-                <p><strong>Build #${BUILD_NUMBER}</strong> completed in <strong>${currentBuild.durationString}</strong></p>
-                
-                <p>🚀 Ready for AWS deployment!</p>
-                
-                <p><a href="${BUILD_URL}">View Full Build Report</a></p>
-                """,
-                to: "adityakg99@gmail.com",
-                mimeType: 'text/html'
-            )
+            script {
+                emailext (
+                    subject: "✅ HealthNodes Pipeline Success - Build #${BUILD_NUMBER}",
+                    body: '''
+                    <h2>🎉 HealthNodes CI/CD Pipeline Success!</h2>
+                    
+                    <p><strong>Build Details:</strong></p>
+                    <ul>
+                        <li><strong>Build Number:</strong> #''' + BUILD_NUMBER + '''</li>
+                        <li><strong>Status:</strong> ✅ SUCCESS</li>
+                        <li><strong>Duration:</strong> ''' + currentBuild.durationString + '''</li>
+                    </ul>
+                    
+                    <p><strong>📦 Docker Images Pushed Successfully!</strong></p>
+                    <p>🚀 Ready for AWS deployment!</p>
+                    
+                    <p><a href="''' + BUILD_URL + '''">View Build Details</a></p>
+                    ''',
+                    to: "${EMAIL_RECIPIENT}",
+                    mimeType: 'text/html'
+                )
+            }
         }
         failure {
             echo 'Pipeline failed!'
-            // Failure notification email
-            emailext (
-                subject: "❌ HealthNodes Pipeline Failed - Build #${BUILD_NUMBER}",
-                body: """
-                <h2>❌ Pipeline Failure Alert</h2>
-                
-                <p>Your HealthNodes CI/CD pipeline has failed.</p>
-                
-                <p><strong>Build Details:</strong></p>
-                <ul>
-                    <li><strong>Build Number:</strong> #${BUILD_NUMBER}</li>
-                    <li><strong>Branch:</strong> working-durva</li>
-                    <li><strong>Status:</strong> ❌ FAILED</li>
-                    <li><strong>Duration:</strong> ${currentBuild.durationString}</li>
-                </ul>
-                
-                <p><strong>🔍 Next Steps:</strong></p>
-                <ul>
-                    <li>Check the <a href="${BUILD_URL}console">console output</a> for error details</li>
-                    <li>Review the failed stage logs</li>
-                    <li>Fix the issue and trigger a new build</li>
-                </ul>
-                
-                <p><a href="${BUILD_URL}">View Build Details</a></p>
-                """,
-                to: "adityakg99@gmail.com",
-                mimeType: 'text/html'
-            )
+            script {
+                emailext (
+                    subject: "❌ HealthNodes Pipeline Failed - Build #${BUILD_NUMBER}",
+                    body: '''
+                    <h2>❌ Pipeline Failure Alert</h2>
+                    
+                    <p>Your HealthNodes CI/CD pipeline has failed.</p>
+                    
+                    <p><strong>Build Number:</strong> #''' + BUILD_NUMBER + '''</p>
+                    <p><strong>Status:</strong> ❌ FAILED</p>
+                    
+                    <p><a href="''' + BUILD_URL + '''console">View Console Output</a></p>
+                    ''',
+                    to: "${EMAIL_RECIPIENT}",
+                    mimeType: 'text/html'
+                )
+            }
         }
     }
 }

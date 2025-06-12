@@ -32,7 +32,7 @@ HealthNodes is a comprehensive healthcare platform that helps users track sympto
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v18 or higher)
 - MongoDB
 - npm or yarn
 
@@ -73,7 +73,7 @@ Backend `.env`:
 ```
 PORT=3000
 MONGODB_URI=your_mongodb_connection_string
-CLIENT_URL=http://localhost:5173
+CLIENT_URL=http://localhost:8000
 JWT_SECRET=your_jwt_secret
 ```
 
