@@ -1,0 +1,262 @@
+@Library("Jenkins-Libraries-HealthNodes")_
+
+pipeline {
+    agent none
+    environment {
+        DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
+        AI_IMAGE = "adityagaikwad888/healthnodes-ai"
+        BACKEND_IMAGE = "adityagaikwad888/healthnodes-backend"
+        FRONTEND_IMAGE = "adityagaikwad888/healthnodes-frontend"
+        DOCKER_TAG = "${env.BUILD_NUMBER}"
+        
+        // Environment variables from .env file
+        MONGODB_URI = credentials('MONGO_URL_HEALTHNODES')
+        JWT_SECRET = credentials('JWT_SECRET_HEALTHNODES')
+        GEMINI_API_KEY = credentials('GEMINI_API_KEY_HEALTHNODES')
+        TWILIO_SID = credentials('TWILIO_SID_HEALTHNODES')
+        TWILIO_AUTH_TOKEN = credentials('TWILIO_AUTH_TOKEN_HEALTHNODES')
+        NVD_API_KEY = credentials('nvd-apikey')
+        EMAIL_RECIPIENT = "adityakg99@gmail.com"
+
+        // SonarQube environment 
+        SONAR_PROJECT_KEY = 'HealthNodes-Jenkins-SonarQube'
+
+    }
+    
+    stages {
+
+        stage("Check Out") {
+            agent { label 'Docker-SonarQube' }
+            steps {
+                sh 'rm -rf * .git || true'  // Clean workspace
+                sh 'git clone -b release https://github.com/vishaldjagdale/Health.git .'
+                stash includes: '**', name: 'Source Code'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            agent { label 'Docker-SonarQube' }
+            steps {
+                echo 'Running SonarQube analysis...'
+                unstash 'Source Code'
+                script {
+                    
+                    withSonarQubeEnv('SonarQube') {  // Use your configured SonarQube server name
+                        sh """
+                            /opt/sonar-scanner/bin/sonar-scanner \
+                                -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                                -Dsonar.projectName=${SONAR_PROJECT_KEY} \
+                                -Dsonar.projectVersion=${BUILD_NUMBER} \
+                                -Dsonar.sources=. \
+                                -Dsonar.working.directory="${WORKSPACE}/sonar" \
+                                -Dsonar.exclusions=**/node_modules/**,**/venv/**,**/*.pyc,**/target/**,**/build/**,**/.git/**
+                        """
+                    }
+                }
+                echo 'SonarQube analysis completed!'
+            }
+        }
+
+ 
+        stage('Security Scan') {
+            agent { label 'Trivy-Owasp' }
+            steps {
+                echo 'Running filesystem security scan by trivy...'
+                unstash 'Source Code'
+
+                sh 'trivy fs . --severity HIGH,CRITICAL --scanners vuln,secret,misconfig --format table -o trivy-report.txt'
+
+                archiveArtifacts artifacts: 'trivy-report.txt', allowEmptyArchive: true
+
+                echo 'Running OWASP dependency scan...'
+                sh '/opt/dependency-check/bin/dependency-check.sh --project HealthNodes --scan backend --format HTML --out owasp-report.html --nvd-api-key ${NVD_API_KEY} || true'
+                archiveArtifacts artifacts: 'owasp-report.html', allowEmptyArchive: true
+
+                echo 'Stashing security reports...'
+                stash includes: '*-report.*', name: 'Security Reports'
+            }
+
+        }
+
+        stage('Build Docker Images') {
+
+            agent { label 'Docker-SonarQube' }
+            steps {
+                echo 'Building Docker images for AI Service, Backend, and Frontend...'
+                unstash 'Source Code'
+                script {
+                    parallel (
+                        'Build AI Service': {
+                                dir('AI Models') {
+                                    sh "docker build -t ${AI_IMAGE}:${DOCKER_TAG} ."
+                                    sh "docker tag ${AI_IMAGE}:${DOCKER_TAG} ${AI_IMAGE}:latest"
+                                }
+                        },
+                        'Build Backend': {
+                                dir('backend') {
+                                    sh "docker build -t ${BACKEND_IMAGE}:${DOCKER_TAG} ."
+                                    sh "docker tag ${BACKEND_IMAGE}:${DOCKER_TAG} ${BACKEND_IMAGE}:latest"
+                            }
+                        },
+                        'Build Frontend': {
+                                dir('frontend') {
+                                    sh "docker build -t ${FRONTEND_IMAGE}:${DOCKER_TAG} ."
+                                    sh "docker tag ${FRONTEND_IMAGE}:${DOCKER_TAG} ${FRONTEND_IMAGE}:latest"
+                                }
+                        }
+                    )
+                }
+            }
+        }
+
+
+        stage('Docker Image Scan with Scout') {
+            agent { label 'Docker-SonarQube' }
+            steps {
+                echo 'Scanning Docker images with Scout..'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                }
+                script {
+                    parallel (
+                        'Scan AI Service': {
+                            sh 'docker scout cves ${AI_IMAGE}:${DOCKER_TAG} --format markdown --output ai-service-scout-report.md || true'
+                            archiveArtifacts artifacts: 'ai-service-scout-report.md', allowEmptyArchive: true
+                        },
+                        'Scan Backend Image': {
+                            sh 'docker scout cves ${BACKEND_IMAGE}:${DOCKER_TAG} --format markdown --output backend-scout-report.md || true'
+                            archiveArtifacts artifacts: 'backend-scout-report.md', allowEmptyArchive: true
+                        },
+                        'Scan Frontend Image': {
+                            sh 'docker scout cves ${FRONTEND_IMAGE}:${DOCKER_TAG} --format markdown --output frontend-scout-report.md || true'
+                            archiveArtifacts artifacts: 'frontend-scout-report.md', allowEmptyArchive: true
+                        }
+                    )
+                }
+                echo 'Docker image scans completed!'
+                stash includes: '*-scout-report.*', name: 'Docker Scout Reports'
+            }
+        }
+        
+        stage('Test Containers') {
+            agent { label 'Docker-SonarQube' }
+            steps {
+                echo 'Testing all containers with docker-compose...'
+                script {
+                    sh '''
+                        echo "Starting all services..."
+                        docker-compose -f docker-compose.test.yml up -d
+                        
+                        echo "Waiting for services to start..."
+                        sleep 30 
+                        
+                        echo "Testing Backend health..."
+                        curl -f http://localhost:3000/health || echo "Backend test done"
+                        
+                        echo "Testing AI Service..."
+                        curl -f http://localhost:5000/ || echo "AI service test done"
+                        
+                        echo "Testing Frontend..."
+                        curl -f http://localhost:8000/ || echo "Frontend test done"
+                        
+                        echo "All tests passed! Stopping containers..."
+                        docker-compose -f docker-compose.test.yml down
+                    '''
+                }
+            }
+        }
+        
+        stage('Push to Docker Hub') {
+            agent { label 'Docker-SonarQube' }
+            steps {
+
+                echo 'Pushing Docker images to Docker Hub...'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                    sh "docker push ${AI_IMAGE}:${DOCKER_TAG}"
+                    sh "docker push ${AI_IMAGE}:latest"
+                    sh "docker push ${BACKEND_IMAGE}:${DOCKER_TAG}"
+                    sh "docker push ${BACKEND_IMAGE}:latest"
+                    sh "docker push ${FRONTEND_IMAGE}:${DOCKER_TAG}"
+                    sh "docker push ${FRONTEND_IMAGE}:latest"
+                }
+            }
+        }
+        
+        stage('Docker Prune') {
+            agent { label 'Docker-SonarQube' }
+            steps {
+                echo 'Cleaning unused Docker resources...'
+                sh 'docker system prune -a -f'
+            }
+        }
+    }
+    
+    post {
+        always {
+            node('Docker-SonarQube') {
+            sh '''
+                docker-compose -f docker-compose.test.yml down || echo "No containers to stop"
+                docker logout
+            '''
+            echo 'Cleaning up workspace...'
+            cleanWs()
+            }
+        }
+        success {
+            node('Docker-SonarQube') {
+            unstash 'Security Reports'
+            unstash 'Docker Scout Reports'
+            echo 'Pipeline completed successfully!'
+            script {
+                emailext (
+                    subject: "✅ HealthNodes Pipeline Success - Build #${BUILD_NUMBER}",
+                    body: '''
+                    <h2>🎉 HealthNodes CI/CD Pipeline Success!</h2>
+                    
+                    <p><strong>Build Details:</strong></p>
+                    <ul>
+                        <li><strong>Build Number:</strong> #''' + BUILD_NUMBER + '''</li>
+                        <li><strong>Status:</strong> ✅ SUCCESS</li>
+                        <li><strong>Duration:</strong> ''' + currentBuild.durationString + '''</li>
+                    </ul>
+                    
+                    <p><strong>📦 Docker Images Pushed Successfully!</strong></p>
+                    <p>🚀 Ready for AWS deployment!</p>
+                    
+                    <p><a href="''' + BUILD_URL + '''">View Build Details</a></p>
+                    ''',
+                    to: "${EMAIL_RECIPIENT}",
+                    mimeType: 'text/html',
+                    attachmentsPattern: 'trivy-report.txt, owasp-report.html, ai-service-scout-report.md, backend-scout-report.md, frontend-scout-report.md'
+                )
+            }
+            }
+        }
+        failure {
+            node('Docker-SonarQube') {
+            unstash 'Security Reports'
+            unstash 'Docker Scout Reports'
+            echo 'Pipeline failed!'
+            script {
+                emailext (
+                    subject: "❌ HealthNodes Pipeline Failed - Build #${BUILD_NUMBER}",
+                    body: '''
+                    <h2>❌ Pipeline Failure Alert</h2>
+                    
+                    <p>Your HealthNodes CI/CD pipeline has failed.</p>
+                    
+                    <p><strong>Build Number:</strong> #''' + BUILD_NUMBER + '''</p>
+                    <p><strong>Status:</strong> ❌ FAILED</p>
+                    
+                    <p><a href="''' + BUILD_URL + '''console">View Console Output</a></p>
+                    ''',
+                    to: "${EMAIL_RECIPIENT}",
+                    mimeType: 'text/html',
+                    attachmentsPattern: 'trivy-report.txt, owasp-report.html, ai-service-scout-report.md, backend-scout-report.md, frontend-scout-report.md'
+                )
+            }
+            }
+        }
+    }
+}

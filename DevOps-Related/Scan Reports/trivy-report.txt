@@ -1,0 +1,139 @@
+
+Report Summary
+
+┌────────────────────────────┬────────────┬─────────────────┬─────────┬───────────────────┐
+│           Target           │    Type    │ Vulnerabilities │ Secrets │ Misconfigurations │
+├────────────────────────────┼────────────┼─────────────────┼─────────┼───────────────────┤
+│ AI Models/requirements.txt │    pip     │        2        │    -    │         -         │
+├────────────────────────────┼────────────┼─────────────────┼─────────┼───────────────────┤
+│ backend/package-lock.json  │    npm     │        1        │    -    │         -         │
+├────────────────────────────┼────────────┼─────────────────┼─────────┼───────────────────┤
+│ frontend/package-lock.json │    npm     │        1        │    -    │         -         │
+├────────────────────────────┼────────────┼─────────────────┼─────────┼───────────────────┤
+│ AI Models/Dockerfile       │ dockerfile │        -        │    -    │         2         │
+├────────────────────────────┼────────────┼─────────────────┼─────────┼───────────────────┤
+│ backend/Dockerfile         │ dockerfile │        -        │    -    │         2         │
+├────────────────────────────┼────────────┼─────────────────┼─────────┼───────────────────┤
+│ frontend/Dockerfile        │ dockerfile │        -        │    -    │         1         │
+└────────────────────────────┴────────────┴─────────────────┴─────────┴───────────────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+
+For OSS Maintainers: VEX Notice
+--------------------------------
+If you're an OSS maintainer and Trivy has detected vulnerabilities in your project that you believe are not actually exploitable, consider issuing a VEX (Vulnerability Exploitability eXchange) statement.
+VEX allows you to communicate the actual status of vulnerabilities in your project, improving security transparency and reducing false positives for your users.
+Learn more and start using VEX: https://trivy.dev/v0.63/docs/supply-chain/vex/repo#publishing-vex-documents
+
+To disable this notice, set the TRIVY_DISABLE_VEX_NOTICE environment variable.
+
+
+AI Models/requirements.txt (pip)
+================================
+Total: 2 (HIGH: 1, CRITICAL: 1)
+
+┌─────────┬────────────────┬──────────┬────────┬───────────────────┬───────────────┬──────────────────────────────────────────────────────┐
+│ Library │ Vulnerability  │ Severity │ Status │ Installed Version │ Fixed Version │                        Title                         │
+├─────────┼────────────────┼──────────┼────────┼───────────────────┼───────────────┼──────────────────────────────────────────────────────┤
+│ Pillow  │ CVE-2023-50447 │ CRITICAL │ fixed  │ 10.0.1            │ 10.2.0        │ pillow: Arbitrary Code Execution via the environment │
+│         │                │          │        │                   │               │ parameter                                            │
+│         │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2023-50447           │
+│         ├────────────────┼──────────┤        │                   ├───────────────┼──────────────────────────────────────────────────────┤
+│         │ CVE-2024-28219 │ HIGH     │        │                   │ 10.3.0        │ python-pillow: buffer overflow in _imagingcms.c      │
+│         │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2024-28219           │
+└─────────┴────────────────┴──────────┴────────┴───────────────────┴───────────────┴──────────────────────────────────────────────────────┘
+
+backend/package-lock.json (npm)
+===============================
+Total: 1 (HIGH: 1, CRITICAL: 0)
+
+┌─────────┬────────────────┬──────────┬────────┬───────────────────┬───────────────┬──────────────────────────────────────────────────────────────┐
+│ Library │ Vulnerability  │ Severity │ Status │ Installed Version │ Fixed Version │                            Title                             │
+├─────────┼────────────────┼──────────┼────────┼───────────────────┼───────────────┼──────────────────────────────────────────────────────────────┤
+│ axios   │ CVE-2025-27152 │ HIGH     │ fixed  │ 1.7.9             │ 1.8.2, 0.30.0 │ axios: Possible SSRF and Credential Leakage via Absolute URL │
+│         │                │          │        │                   │               │ in axios Requests...                                         │
+│         │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-27152                   │
+└─────────┴────────────────┴──────────┴────────┴───────────────────┴───────────────┴──────────────────────────────────────────────────────────────┘
+
+frontend/package-lock.json (npm)
+================================
+Total: 1 (HIGH: 1, CRITICAL: 0)
+
+┌─────────┬────────────────┬──────────┬────────┬───────────────────┬───────────────┬──────────────────────────────────────────────────────────────┐
+│ Library │ Vulnerability  │ Severity │ Status │ Installed Version │ Fixed Version │                            Title                             │
+├─────────┼────────────────┼──────────┼────────┼───────────────────┼───────────────┼──────────────────────────────────────────────────────────────┤
+│ axios   │ CVE-2025-27152 │ HIGH     │ fixed  │ 1.7.9             │ 1.8.2, 0.30.0 │ axios: Possible SSRF and Credential Leakage via Absolute URL │
+│         │                │          │        │                   │               │ in axios Requests...                                         │
+│         │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-27152                   │
+└─────────┴────────────────┴──────────┴────────┴───────────────────┴───────────────┴──────────────────────────────────────────────────────────────┘
+
+AI Models/Dockerfile (dockerfile)
+=================================
+Tests: 20 (SUCCESSES: 18, FAILURES: 2)
+Failures: 2 (HIGH: 2, CRITICAL: 0)
+
+AVD-DS-0002 (HIGH): Specify at least 1 USER command in Dockerfile with non-root user as argument
+════════════════════════════════════════
+Running containers with 'root' user can lead to a container escape situation. It is a best practice to run containers as non-root users, which can be done by adding a 'USER' statement to the Dockerfile.
+
+See https://avd.aquasec.com/misconfig/ds002
+────────────────────────────────────────
+
+
+AVD-DS-0029 (HIGH): '--no-install-recommends' flag is missed: 'apt-get update && apt-get install -y     gcc     curl     && rm -rf /var/lib/apt/lists/*'
+════════════════════════════════════════
+'apt-get' install should use '--no-install-recommends' to minimize image size.
+
+See https://avd.aquasec.com/misconfig/ds029
+────────────────────────────────────────
+ AI Models/Dockerfile:6-9
+────────────────────────────────────────
+   6 ┌ RUN apt-get update && apt-get install -y \
+   7 │     gcc \
+   8 │     curl \
+   9 └     && rm -rf /var/lib/apt/lists/*
+────────────────────────────────────────
+
+
+
+backend/Dockerfile (dockerfile)
+===============================
+Tests: 20 (SUCCESSES: 18, FAILURES: 2)
+Failures: 2 (HIGH: 2, CRITICAL: 0)
+
+AVD-DS-0002 (HIGH): Specify at least 1 USER command in Dockerfile with non-root user as argument
+════════════════════════════════════════
+Running containers with 'root' user can lead to a container escape situation. It is a best practice to run containers as non-root users, which can be done by adding a 'USER' statement to the Dockerfile.
+
+See https://avd.aquasec.com/misconfig/ds002
+────────────────────────────────────────
+
+
+AVD-DS-0029 (HIGH): '--no-install-recommends' flag is missed: 'apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*'
+════════════════════════════════════════
+'apt-get' install should use '--no-install-recommends' to minimize image size.
+
+See https://avd.aquasec.com/misconfig/ds029
+────────────────────────────────────────
+ backend/Dockerfile:7
+────────────────────────────────────────
+   7 [ RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
+────────────────────────────────────────
+
+
+
+frontend/Dockerfile (dockerfile)
+================================
+Tests: 20 (SUCCESSES: 19, FAILURES: 1)
+Failures: 1 (HIGH: 1, CRITICAL: 0)
+
+AVD-DS-0002 (HIGH): Specify at least 1 USER command in Dockerfile with non-root user as argument
+════════════════════════════════════════
+Running containers with 'root' user can lead to a container escape situation. It is a best practice to run containers as non-root users, which can be done by adding a 'USER' statement to the Dockerfile.
+
+See https://avd.aquasec.com/misconfig/ds002
+────────────────────────────────────────
+
+
